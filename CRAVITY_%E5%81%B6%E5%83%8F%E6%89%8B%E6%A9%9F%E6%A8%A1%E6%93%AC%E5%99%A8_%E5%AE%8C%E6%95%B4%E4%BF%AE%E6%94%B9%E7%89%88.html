@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#17191d">
+<title>김태영의 iPhone · 完整修正版</title>
+<style>
+:root{--bg:#17191d;--panel:#24262b;--panel2:#303238;--line:#45474d;--muted:#a4a6ad;--text:#f7f7f8;--blue:#0a84ff;--green:#30d158;--red:#ff453a;--yellow:#ffd60a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0e0f11;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Noto Sans TC",Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+#stage{height:100dvh;width:100vw;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#292b30 0,#111214 68%);padding:0}
+#phone{position:relative;width:min(100vw,calc(100dvh * 9 / 19.5));height:min(100dvh,calc(100vw * 19.5 / 9));aspect-ratio:9/19.5;background:#222;border:1px solid #555;border-radius:38px;overflow:hidden;box-shadow:0 20px 80px #000b;isolation:isolate}
+@media(max-width:520px){#stage{background:#17191d}#phone{width:100vw;height:100dvh;border:0;border-radius:0;box-shadow:none}}
+#wallpaper{position:absolute;inset:0;background:#303238}
+#statusbar{position:absolute;z-index:30;top:0;left:0;right:0;height:32px;padding:8px 22px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:650;pointer-events:none}
+.statusright{display:flex;gap:5px;align-items:center}
+#dynamic-island{position:absolute;z-index:31;top:7px;left:50%;transform:translateX(-50%);width:86px;height:23px;border-radius:20px;background:#050505}
+.screen{position:absolute;inset:0;display:none;overflow:hidden}
+.screen.active{display:block}
+#lockscreen{z-index:5;background:#303238}
+#locktime{position:absolute;top:16%;width:100%;text-align:center;font-size:76px;letter-spacing:-3px;font-weight:250}
+#lockdate{position:absolute;top:14%;width:100%;text-align:center;font-size:16px}
+#lockhint{position:absolute;bottom:12%;width:100%;text-align:center;color:#ddd;font-size:13px}
+#locknotifs{position:absolute;top:43%;left:14px;right:14px;display:grid;gap:8px}
+.notif{background:#ffffffd9;color:#171717;border-radius:15px;padding:11px 13px;font-size:12px;backdrop-filter:blur(20px)}
+.notif b{display:block;font-size:13px;margin-bottom:3px}
+#lockbottom{position:absolute;bottom:28px;left:28px;right:28px;display:flex;justify-content:space-between;align-items:center}
+.lockcircle{width:42px;height:42px;border-radius:50%;background:#3339;border:1px solid #ffffff55;display:grid;place-items:center;font-size:18px}
+#unlock{position:absolute;inset:0;z-index:9;background:#17191df2;display:none;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(25px)}
+#unlock.show{display:flex}
+#unlock h2{font-size:18px;font-weight:550;margin:0 0 24px}
+#dots{display:flex;gap:14px;margin-bottom:26px}
+.dot{width:10px;height:10px;border-radius:50%;border:1px solid #fff}
+.dot.filled{background:#fff}
+#keypad{width:230px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.key{height:58px;border:0;border-radius:50%;background:#ffffff20;color:white;font-size:25px;font-weight:300}
+.key small{display:block;font-size:8px;letter-spacing:1px}
+.key:active{background:#ffffff55}
+#home{z-index:4;background:#303238;padding:58px 17px 30px}
+#homepages{height:calc(100% - 100px);position:relative}
+.homepage{display:none;height:100%;grid-template-columns:repeat(4,1fr);grid-auto-rows:88px;align-content:start;gap:3px 5px}
+.homepage.active{display:grid}
+.appicon{border:0;background:transparent;color:white;display:flex;align-items:center;flex-direction:column;gap:5px;padding:0;min-width:0}
+.iconbox{width:53px;height:53px;border-radius:14px;display:grid;place-items:center;font-size:27px;font-weight:650;box-shadow:0 2px 5px #0003;position:relative;overflow:hidden;flex:none}.iconbox svg{width:100%;height:100%;display:block}.iconbox .wordmark{font-size:15px;font-weight:800;letter-spacing:-.7px}.iconbox.icon-calendar{font-size:10px}
+.appicon span:last-child{font-size:10px;text-shadow:0 1px 3px #000;font-weight:450;white-space:nowrap}
+.icon-kakao{background:#fee500;color:#291e00}.icon-ig{background:radial-gradient(circle at 30% 105%,#ffd776 0,#f56040 35%,#c13584 62%,#833ab4 85%,#405de6 100%);color:white}
+.icon-x{background:#080808;color:white}.icon-bubble{background:#8ac9ff;color:#124d83}.icon-berriz{background:#fff;color:#e94d75}.icon-yt{background:#fff;color:#f00}.icon-camera{background:linear-gradient(#555,#111);color:#fff}.icon-photos{background:linear-gradient(135deg,#fff,#ddd);color:#e65a94}.icon-calendar{background:#fff;color:#222;font-size:11px}.icon-melon{background:#00c875;color:#fff}.icon-maps{background:#fff;color:#37a66b}.icon-weather{background:linear-gradient(#52b7fa,#2862a7);color:#fff}.icon-mail{background:linear-gradient(#80c7ff,#1676dc);color:white}.icon-game{background:#26272d;color:#a5e7c7}.icon-wallet{background:#111;color:#fff;border:1px solid #aaa}.icon-clock{background:#fff;color:#222}.icon-translate{background:#fff;color:#2877d6}.icon-food{background:#ff805d;color:#fff}.icon-taxi{background:#f6ce36;color:#222}.icon-health{background:#fff;color:#ff375f}.icon-notes{background:#fff;color:#333}.icon-phone{background:#36c65b;color:white}.icon-msg{background:#38cf65;color:white}.icon-settings{background:linear-gradient(#aaa,#666);color:#fff}.icon-calc{background:#ff9f0a;color:white}
+#dock{position:absolute;bottom:15px;left:13px;right:13px;height:82px;border-radius:25px;background:#ffffff35;backdrop-filter:blur(24px);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:8px}
+#dock .appicon span:last-child{display:none}
+#pagedots{position:absolute;bottom:107px;left:0;right:0;display:flex;justify-content:center;gap:7px}
+.pagedot{width:6px;height:6px;border-radius:50%;background:#ffffff70}.pagedot.on{background:#fff}
+#appview{z-index:10;background:#f4f4f6;color:#171719;display:none}
+#appview.active{display:block}
+.appheader{height:62px;padding:29px 15px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ddd;background:#f8f8fa;position:relative;z-index:2}
+.appheader h2{font-size:17px;margin:0;font-weight:700}
+.appheader button{border:0;background:transparent;color:#087cff;font-size:14px;padding:4px}
+.appbody{height:calc(100% - 62px);overflow:auto;padding:14px 14px 30px;background:#f4f4f6;color:#171719}
+.appbody.dark{background:#080808;color:#f5f5f5}
+.card{background:#fff;border-radius:14px;padding:13px;margin-bottom:10px;box-shadow:0 1px 2px #0000000a}
+.card.dark{background:#171719;color:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.muted{color:#8b8b91}.small{font-size:12px}.tiny{font-size:10px}
+.pill{display:inline-block;border-radius:99px;background:#e8f2ff;color:#087cff;padding:4px 8px;font-size:11px}
+.item{padding:13px 2px;border-bottom:1px solid #e5e5e8}
+.item:last-child{border:0}
+.action{border:0;border-radius:10px;background:#087cff;color:#fff;padding:10px 13px;font-weight:600}
+.action.secondary{background:#e9e9ed;color:#222}
+.action.danger{background:#ff453a}
+.choice{width:100%;text-align:left;border:1px solid #ddd;background:white;color:#222;padding:12px;border-radius:12px;margin:5px 0}
+#homebar{position:absolute;z-index:40;bottom:7px;left:50%;transform:translateX(-50%);width:112px;height:4px;border-radius:5px;background:#fff;opacity:.85;display:none}
+#homebar.dark{background:#111}
+#gesturelayer{position:absolute;z-index:35;bottom:0;left:0;right:0;height:20px}
+#toast{position:absolute;z-index:80;bottom:40px;left:50%;transform:translateX(-50%);background:#222e;color:#fff;padding:9px 14px;border-radius:20px;font-size:12px;display:none;white-space:nowrap}
+#overlay{position:absolute;inset:0;z-index:50;display:none;background:#0008;backdrop-filter:blur(12px);padding:42px 14px 20px;overflow:auto}
+#overlay.show{display:block}
+#overlay .sheet{background:#f4f4f6;color:#171719;border-radius:20px;padding:15px;max-height:100%;overflow:auto}
+#overlay h3{margin:3px 0 12px}
+#appfooter{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:110px;height:4px;border-radius:4px;background:#111;z-index:4;pointer-events:none}
+input[type=text]{border:1px solid #ccc;border-radius:9px;padding:10px;width:100%}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.photo{aspect-ratio:1;background:linear-gradient(135deg,#777,#34363b);display:flex;align-items:end;padding:6px;color:#fff;font-size:10px;text-shadow:0 1px 4px #000}
+#appbody-content{min-height:100%}
+@media(min-width:700px){#phone{border-radius:42px}}
+
+/* KakaoTalk：獨立聊天列表與一對一／群組聊天室 */
+#appbody:has(.kt-wrap){padding:0!important;overflow:hidden;background:#b7c8d8}
+.kt-wrap{height:100%;display:flex;flex-direction:column;background:#f7f7f7;color:#222;overflow:hidden}
+.kt-top{height:52px;flex:none;background:#fee500;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:18px;font-weight:750}
+.kt-top-actions{display:flex;gap:18px;font-size:20px;font-weight:400}
+.kt-search{margin:11px 14px 8px;padding:10px 13px;border-radius:9px;background:#f1f1f1;color:#999;font-size:13px}
+.kt-list{flex:1;overflow:auto;background:#fff}
+.kt-row{width:100%;display:flex;align-items:center;gap:11px;padding:12px 14px;border:0;border-bottom:1px solid #f0f0f0;background:#fff;text-align:left;color:#222;min-height:72px}
+.kt-avatar{width:48px;height:48px;border-radius:18px;flex:none;background:linear-gradient(145deg,#d8dce2,#aeb7c2);display:grid;place-items:center;color:#fff;font-size:17px;font-weight:700;position:relative;overflow:hidden}
+.kt-avatar.group{background:#d9d2c8;color:#766d62}
+.kt-row-main{min-width:0;flex:1}
+.kt-row-title{display:flex;align-items:center;gap:5px;font-size:15px;font-weight:650}
+.kt-row-preview{font-size:12px;color:#999;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kt-row-right{align-self:stretch;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;font-size:10px;color:#aaa;padding:2px 0}
+.kt-unread{width:18px;height:18px;border-radius:50%;background:#f04d42;color:white;display:grid;place-items:center;font-size:10px}
+.kt-tabs{height:54px;flex:none;background:#fafafa;border-top:1px solid #eee;display:flex;justify-content:space-around;align-items:center;color:#888;font-size:11px}
+.kt-tabs span{display:flex;flex-direction:column;align-items:center;gap:3px}.kt-tabs b{font-size:19px;font-weight:500;color:#555}
+.kt-room{height:100%;display:flex;flex-direction:column;background:#b7c8d8;color:#222;overflow:hidden}
+.kt-roomhead{height:49px;flex:none;background:#b7c8d8;display:flex;align-items:center;justify-content:space-between;padding:0 13px;border-bottom:1px solid #a9bac9}
+.kt-roomhead button{background:transparent;color:#2875a8;font-size:15px;padding:5px}
+.kt-roomtitle{font-size:16px;font-weight:700;text-align:center;flex:1}
+.kt-roomtools{font-size:19px;color:#536b7e;min-width:48px;text-align:right}
+.kt-messages{flex:1;min-height:0;overflow:auto;padding:9px 11px 14px;scroll-behavior:smooth}
+.kt-day{text-align:center;color:#fff;background:#8299aa;border-radius:14px;font-size:10px;padding:5px 12px;width:max-content;margin:13px auto 17px}
+.kt-msg{display:flex;gap:7px;margin:10px 0;align-items:flex-end}
+.kt-msg.mine{justify-content:flex-end}
+.kt-msg-avatar{width:30px;height:30px;flex:none;border-radius:50%;background:#eeeeef;border:1px solid #dedede;position:relative;overflow:hidden;display:block;color:transparent;font-size:0}
+.kt-msg-avatar::before{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:#c7c7c7;left:50%;top:5px;transform:translateX(-50%)}
+.kt-msg-avatar::after{content:"";position:absolute;width:19px;height:14px;border-radius:12px 12px 5px 5px;background:#c7c7c7;left:50%;bottom:2px;transform:translateX(-50%)}
+.kt-msg-content{max-width:77%;min-width:0}
+.kt-sender{font-size:10px;color:#536879;margin:0 0 4px 2px}
+.kt-bubbleline{display:flex;align-items:flex-end;gap:5px}
+.kt-bubble{background:#fff;border-radius:4px 13px 13px 13px;padding:9px 11px;font-size:13px;line-height:1.48;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 1px 1px #52697a12}
+.kt-msg.mine .kt-bubble{background:#fee500;border-radius:13px 4px 13px 13px}
+.kt-translation{border-top:1px solid #00000012;padding-top:5px;margin-top:5px;color:#777;font-size:11px;line-height:1.4}
+.kt-time{font-size:9px;color:#60788a;white-space:nowrap;padding-bottom:2px}
+.kt-compose{flex:none;background:#edf1f4;border-top:1px solid #a8b8c5;padding:8px 10px calc(10px + env(safe-area-inset-bottom));max-height:38%;overflow:auto}
+.kt-compose-label{font-size:10px;color:#718391;margin:0 0 5px 2px}
+.kt-reply{width:100%;text-align:left;border:0;border-radius:10px;background:#fff6bd;color:#333;padding:8px 10px;margin:4px 0;font-size:12px;line-height:1.4}
+.kt-reply .kt-translation{font-size:10px;margin-top:3px;padding-top:3px}
+.kt-readonly{font-size:11px;color:#718391;text-align:center;padding:13px;background:#edf1f4}
+
+
+/* STARSHIP bubble：使用官方圖示與滿版白色介面 */
+.icon-bubble{background:transparent!important;box-shadow:none!important;border-radius:14px!important}
+.icon-bubble img{width:100%;height:100%;display:block;object-fit:cover;border-radius:14px}
+#appview.bubble-mode{background:#fff;color:#111}
+#appview.bubble-mode .appheader{display:none}
+#appview.bubble-mode .appbody{position:absolute;inset:0;height:100%;padding:0!important;background:#fff;color:#111;overflow:hidden}
+#appview.bubble-mode #appbody-content{height:100%;min-height:100%;background:#fff}
+#appview.bubble-mode #appfooter{display:none}
+#appview.bubble-mode #appmore{display:none}
+#appview.bubble-mode #appback{display:none}
+#statusbar.bubble-status{color:#111}
+.bubble-home{height:100%;display:flex;flex-direction:column;background:#fff;color:#111;padding:calc(42px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));}
+.bubble-home-title{font-size:19px;font-weight:750;text-align:center;padding:10px 0 18px;border-bottom:1px solid #eee;letter-spacing:-.3px}
+.bubble-choice{display:flex;align-items:center;gap:13px;width:100%;padding:15px 3px;border:0;border-bottom:1px solid #eee;background:#fff;text-align:left;color:#111}
+.bubble-choice-avatar{width:54px;height:54px;border-radius:50%;border:2px solid #ed9849;background:#f1f1f1;display:grid;place-items:center;overflow:hidden;flex:none}
+.bubble-choice-avatar img{width:100%;height:100%;object-fit:cover}
+.bubble-placeholder{width:100%;height:100%;display:grid;place-items:center;color:#aaa;font-size:22px}
+.bubble-choice-main{flex:1;min-width:0}
+.bubble-choice-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px}
+.bubble-choice-sub{font-size:12px;color:#999;margin-top:5px}
+.bubble-unread{width:7px;height:7px;border-radius:50%;background:#ed9849}
+.bubble-room{height:100%;display:flex;flex-direction:column;background:#fff;color:#111;overflow:hidden}
+.bubble-room-head{height:52px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid #f0f0f0;font-size:16px;font-weight:700;padding:0 48px}
+.bubble-room-head button{position:absolute;left:10px;top:4px;border:0;background:transparent;color:#222;font-size:30px;line-height:40px;padding:0 8px}
+.bubble-room-head .bubble-room-more{left:auto;right:12px;font-size:20px;color:#777}
+.bubble-room-messages{flex:1;min-height:0;overflow:auto;padding:14px 10px 22px;background:#fff}
+.bubble-message{display:flex;gap:8px;align-items:flex-start;margin:0 0 22px}
+.bubble-message-content{min-width:0;max-width:calc(100% - 48px);flex:1}
+.bubble-avatar{width:46px;height:46px;flex:none;border-radius:50%;border:2px solid #e99a4e;padding:2px;background:#fff;overflow:hidden;display:block;cursor:pointer}
+.bubble-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.bubble-avatar .bubble-placeholder{border-radius:50%;background:#f1f1f1}
+.bubble-artist-line{display:flex;align-items:center;gap:7px;margin:0 0 6px}
+.bubble-artist-tag{display:inline-flex;align-items:center;justify-content:center;background:#e9954a;color:#fff;font-size:10px;letter-spacing:1px;font-weight:850;padding:4px 7px;border-radius:2px;line-height:1.1}
+.bubble-artist-name{font-size:14px;font-weight:750;color:#111}
+.bubble-card{background:#fff;border-radius:4px 20px 20px 20px;box-shadow:0 1px 1px #00000008;overflow:hidden;max-width:100%;border:1px solid #f5f5f5}
+.bubble-korean{padding:13px 14px 12px;color:#111;font-size:16px;font-weight:550;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble-chinese{border-top:2px dashed #ededed;padding:12px 14px 13px;color:#222;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble-time{font-size:11px;color:#a4aaa2;text-align:right;margin:4px 2px 0}
+.bubble-image{display:block;width:100%;max-width:260px;max-height:330px;object-fit:cover;border-radius:12px;cursor:pointer}
+.bubble-static-card{background:#fff;border:1px solid #eee;border-radius:18px;padding:14px 17px;display:flex;align-items:center;gap:13px;font-size:20px;color:#111;min-height:68px}
+.bubble-static-icon{width:38px;height:38px;border:2px solid #eee;border-radius:50%;display:grid;place-items:center;font-size:20px;flex:none}
+.bubble-static-note{font-size:11px;color:#aaa;margin:5px 0 0 3px}
+.bubble-profile{position:relative;width:100%;height:100%;min-height:100%;background:#fff;color:#111;overflow:hidden}
+.bubble-profile-close{position:absolute;z-index:3;top:calc(4.5% + env(safe-area-inset-top));left:5.5%;width:34px;height:34px;border:0;background:transparent;color:#111;font-size:34px;font-weight:300;line-height:30px;padding:0}
+.bubble-profile-group{position:absolute;left:0;right:0;top:calc(60% - min(12vw, 50px));transform:none;display:flex;flex-direction:column;align-items:center;text-align:center}
+.bubble-profile-avatar{width:24vw;height:24vw;max-width:100px;max-height:100px;min-width:78px;min-height:78px;border-radius:50%;border:3px solid #ed9849;padding:3px;background:#fff;overflow:hidden;display:block;cursor:pointer}
+.bubble-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.bubble-profile-name-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:1.5vh}
+.bubble-profile .bubble-artist-tag{font-size:9px;padding:3px 7px;letter-spacing:1px}
+.bubble-profile-name{font-size:14px;font-weight:750;line-height:1.2}
+.bubble-clover{font-size:24px;line-height:1;margin-top:2.2vh}
+.bubble-profile-id{margin-top:3.3vh;border:1px solid #d9d9de;border-radius:999px;padding:6px 4px;color:#555;font-size:10px;line-height:1.2;white-space:nowrap;background:#ffffffa8;width:35vw;min-width:0}
+.bubble-upload-hint{font-size:9px;color:#aaa;margin-top:8px}
+#bubble-image-viewer{position:absolute;inset:0;z-index:60;background:#000;display:none;align-items:center;justify-content:center}
+#bubble-image-viewer.show{display:flex}
+#bubble-image-viewer img{max-width:100%;max-height:100%;object-fit:contain}
+#bubble-image-viewer button{position:absolute;top:calc(28px + env(safe-area-inset-top));left:18px;border:0;background:transparent;color:#fff;font-size:32px}
+
+
+/* Phone app — iOS 26 unified layout */
+#appview.phone-mode .appheader{display:none}
+#appview.phone-mode .appbody{position:absolute;inset:0;height:100%;padding:0!important;background:#f5f5f7;color:#111;overflow:hidden}
+#appview.phone-mode #appbody-content{height:100%;min-height:100%;background:#f5f5f7}
+#appview.phone-mode #appfooter{background:#111;z-index:12}
+.phone-ui{height:100%;display:flex;flex-direction:column;background:#f5f5f7;color:#111;overflow:hidden;padding-top:calc(45px + env(safe-area-inset-top));}
+.phone-scroll{flex:1;min-height:0;overflow:auto;padding:12px 17px 18px;}
+.phone-topline{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px}
+.phone-title{font-size:31px;letter-spacing:-1px;font-weight:760}
+.phone-topbtn{border:0;background:transparent;color:#087cff;font-size:15px;padding:5px}
+.phone-search{height:37px;border-radius:11px;background:#e7e7eb;color:#8c8c92;display:flex;align-items:center;gap:8px;padding:0 11px;font-size:14px;margin:10px 0 20px}
+.phone-section-title{font-size:21px;font-weight:720;letter-spacing:-.4px;margin:15px 0 11px}
+.phone-favs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px 8px;margin-bottom:23px}
+.phone-fav{border:0;background:transparent;color:#111;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:0}
+.phone-avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#dedee3,#b8bac2);color:#fff;font-size:20px;font-weight:650;box-shadow:0 1px 2px #0001}
+.phone-fav-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.phone-list{background:#fff;border-radius:13px;overflow:hidden}
+.phone-callrow{display:flex;align-items:center;gap:11px;width:100%;border:0;border-bottom:1px solid #e9e9ed;background:#fff;color:#111;text-align:left;padding:12px 2px;min-height:67px}
+.phone-callrow:last-child{border-bottom:0}
+.phone-callrow .phone-avatar{width:43px;height:43px;flex:none;font-size:16px}
+.phone-row-main{flex:1;min-width:0}
+.phone-row-name{font-size:15px;font-weight:620;display:flex;align-items:center;gap:5px}
+.phone-row-sub{font-size:12px;color:#8a8a90;margin-top:4px}
+.phone-row-time{font-size:11px;color:#8a8a90;align-self:flex-start;padding:4px 7px 0 0;white-space:nowrap}
+.phone-nav{height:73px;flex:none;background:#f9f9fb;border-top:1px solid #dedee3;display:flex;align-items:center;justify-content:space-around;padding:5px 6px calc(12px + env(safe-area-inset-bottom));}
+.phone-nav button{border:0;background:transparent;color:#8c8c92;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;min-width:55px;padding:3px}
+.phone-nav button.active{color:#087cff}
+.phone-nav b{font-size:22px;line-height:24px;font-weight:500}
+.phone-empty{padding:26px 12px;text-align:center;color:#8a8a90;font-size:13px}
+.phone-contact-head{text-align:center;padding:12px 0 20px}
+.phone-contact-head .phone-avatar{width:82px;height:82px;margin:0 auto 10px;font-size:29px}
+.phone-contact-name{font-size:22px;font-weight:700}
+.phone-actions{display:flex;justify-content:center;gap:12px;margin:14px 0}
+.phone-action{border:0;border-radius:13px;background:#e8f2ff;color:#087cff;min-width:76px;padding:10px 12px;font-size:12px}
+.phone-key-display{height:75px;text-align:center;font-size:29px;letter-spacing:1px;padding:13px 0 5px;color:#111;overflow:hidden}
+.phone-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 23px;max-width:290px;margin:10px auto 8px}
+.phone-key{height:62px;border:0;border-radius:50%;background:#e5e5e9;color:#111;font-size:27px;font-weight:400;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.phone-key small{font-size:8px;letter-spacing:2px;margin-top:4px;color:#555}
+.phone-dial-actions{display:flex;align-items:center;justify-content:center;gap:25px;margin-top:12px}
+.phone-call-btn{width:58px;height:58px;border:0;border-radius:50%;background:#30c65a;color:#fff;font-size:25px}
+.phone-backspace{border:0;background:transparent;color:#777;font-size:21px;padding:10px}
+.phone-search-input{width:100%;border:0;border-radius:11px;background:#e7e7eb;padding:11px 13px;font-size:15px;outline:none}
+
+
+/* Berriz — CRAVITY fan community */
+#appview.berriz-mode .appheader{display:none}
+#appview.berriz-mode .appbody{position:absolute;inset:0;height:100%;padding:0!important;background:#f5f5f7;overflow:hidden}
+#appview.berriz-mode #appbody-content{height:100%;min-height:100%;background:#f5f5f7}
+#appview.berriz-mode #appfooter{display:none}
+.berriz-screen{height:100%;min-height:100%;display:flex;flex-direction:column;background:#f5f5f7;color:#202126;margin:0;padding:0!important;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;overflow:hidden}
+.berriz-top{height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#fff;border-bottom:1px solid #eee}
+.berriz-brand{font-size:22px;font-weight:850;letter-spacing:-1px;color:#17171a}
+.berriz-brand em{font-style:normal;color:#ee6684}
+.berriz-top-actions button{border:0;background:none;color:#333;font-size:21px;padding:5px 8px}
+.berriz-scroll{flex:1;min-height:0;overflow:auto;padding-bottom:10px}
+.berriz-cover{height:105px;border-radius:0;background:linear-gradient(115deg,#252b3a,#66516c 55%,#d6a9bc);position:relative;overflow:hidden}
+.berriz-cover:before{content:'✦';position:absolute;left:22px;top:14px;color:#ffffff55;font-size:45px}
+.berriz-cover span{position:absolute;right:18px;bottom:25px;color:#fff;font-size:26px;font-weight:900;letter-spacing:3px;text-shadow:0 1px 8px #222}
+.berriz-cover small{position:absolute;right:20px;bottom:12px;color:#ffffffc9;font-size:8px;letter-spacing:2px}
+.berriz-community{padding:0 15px 11px;background:#fff;border-bottom:1px solid #eee}
+.berriz-community-head{display:flex;align-items:center;gap:10px;margin-top:-24px;position:relative}
+.berriz-avatar{width:58px;height:58px;border:3px solid white;border-radius:50%;background:linear-gradient(145deg,#242b3c,#8e7a91);display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 1px 4px #bbb}
+.berriz-community-name{font-size:17px;font-weight:800;margin-top:22px}
+.berriz-community-sub{font-size:10px;color:#999;margin-top:3px}
+.berriz-follow{margin-left:auto;margin-top:22px;border:0;border-radius:18px;background:#25252b;color:#fff;padding:8px 16px;font-size:11px;font-weight:700}
+.berriz-community-tabs{display:flex;gap:25px;overflow:auto;white-space:nowrap;padding:15px 1px 0;font-size:12px;font-weight:650;color:#999}
+.berriz-community-tabs button{border:0;background:none;padding:0 0 9px;color:inherit;font:inherit}
+.berriz-community-tabs button.active{color:#222;border-bottom:2px solid #222}
+.berriz-feed-tools{display:flex;justify-content:space-between;align-items:center;padding:13px 15px 8px;font-size:10px;color:#888}
+.berriz-post{background:#fff;padding:14px 15px;margin:0 0 7px;border:0}
+.berriz-post-head{display:flex;align-items:center;gap:9px}
+.berriz-user-avatar{width:35px;height:35px;border-radius:50%;background:linear-gradient(140deg,#e8b9cb,#b9c7e5);display:grid;place-items:center;color:white;font-size:11px;font-weight:800}
+.berriz-user{font-size:11px;font-weight:750}.berriz-post-time{font-size:9px;color:#aaa;margin-top:3px}.berriz-post-menu{margin-left:auto;color:#999}
+.berriz-post-text{font-size:12px;line-height:1.6;margin:12px 0;color:#303036;white-space:pre-line}
+.berriz-post-image{height:150px;border-radius:9px;background:linear-gradient(135deg,#303744,#8c8290 50%,#d9b8c7);display:grid;place-items:center;color:#fff;font-size:20px;font-weight:850;letter-spacing:2px;margin:9px 0}
+.berriz-post-actions{display:flex;gap:18px;color:#777;font-size:11px;padding-top:10px;border-top:1px solid #f2f2f3}
+.berriz-post-actions button{border:0;background:none;color:inherit;padding:0;font-size:11px}
+.berriz-bottom-tabs{height:57px;flex:none;position:relative;bottom:auto;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;align-items:center;padding:5px 4px calc(5px + env(safe-area-inset-bottom));color:#999}
+.berriz-bottom-tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;color:inherit;font-size:9px;padding:2px 10px}
+.berriz-bottom-tabs button.active{color:#25252b}.berriz-bottom-tabs b{font-size:19px;line-height:19px;font-weight:500}
+.berriz-section-card{background:#fff;margin:8px 11px;border-radius:11px;padding:13px;font-size:11px}
+.berriz-section-title{font-size:13px;font-weight:800;margin-bottom:9px}
+.berriz-media-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.berriz-media-tile{height:112px;border-radius:9px;position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:9px;background:linear-gradient(135deg,#303744,#8c8290 50%,#d9b8c7)}
+.berriz-media-tile b{font-size:18px}.berriz-media-tile span{font-size:9px;line-height:1.4}
+.berriz-schedule-row{display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid #f0f0f2}
+.berriz-schedule-row>b{width:38px;height:38px;border-radius:9px;background:#fff0f3;color:#e45b7c;display:grid;place-items:center;font-size:14px}
+.berriz-schedule-row span{display:flex;flex-direction:column;gap:3px}.berriz-schedule-row strong{font-size:11px}.berriz-schedule-row small{font-size:9px;color:#999}
+.berriz-searchbar{display:flex;gap:7px;padding:9px 12px;background:#fff;border-bottom:1px solid #eee}
+.berriz-searchbar input{flex:1;min-width:0;border:0;border-radius:9px;background:#f1f1f4;padding:9px 11px;font-size:11px;outline:none}
+.berriz-searchbar button{border:0;background:none;color:#555;font-size:11px}
+.berriz-comment{background:#f7f7f8;border-radius:10px;padding:9px;margin-top:7px;font-size:10px;line-height:1.5}
+.berriz-notice{background:#fff;margin:9px 11px 0;padding:11px;border-radius:10px;font-size:10px;color:#777}
+
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="phone">
+<div id="wallpaper"></div>
+<div id="statusbar"><span id="status-time">08:00</span><span class="statusright"><span>▮▮▮▮</span><span>LTE</span><span>▰</span></span></div>
+<div id="dynamic-island"></div>
+<section id="lockscreen" class="screen active">
+<div id="lockdate">11月2日 星期一</div><div id="locktime">08:00</div>
+<div id="locknotifs">
+<div class="notif"><b>KakaoTalk · 성민이</b> 일어났어? 오늘 일정 확인했어? <span class="tiny">現在</span></div>
+<div class="notif"><b>Calendar</b> 오늘 일정이 있어요 · 09:30 <span class="tiny">現在</span></div>
+<div class="notif"><b>Bubble</b> 새로운 메시지가 도착했습니다. <span class="tiny">現在</span></div>
+</div>
+<div id="lockhint">向上滑動以解鎖</div>
+<div id="lockbottom"><div class="lockcircle">⌁</div><div class="lockcircle">◉</div></div>
+</section>
+<div id="unlock">
+<h2>輸入密碼</h2><div id="dots"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+<div id="keypad">
+<button class="key" data-n="1">1<small>&nbsp;</small></button><button class="key" data-n="2">2<small>ABC</small></button><button class="key" data-n="3">3<small>DEF</small></button>
+<button class="key" data-n="4">4<small>GHI</small></button><button class="key" data-n="5">5<small>JKL</small></button><button class="key" data-n="6">6<small>MNO</small></button>
+<button class="key" data-n="7">7<small>PQRS</small></button><button class="key" data-n="8">8<small>TUV</small></button><button class="key" data-n="9">9<small>WXYZ</small></button>
+<button class="key" data-n="clear" style="font-size:12px">取消</button><button class="key" data-n="0">0</button><button class="key" data-n="del" style="font-size:12px">刪除</button>
+</div><p id="pass-error" class="small" style="color:#ff8a80"></p>
+</div>
+<section id="home" class="screen">
+<div id="homepages">
+<div class="homepage active" data-page="0" id="page0"></div>
+<div class="homepage" data-page="1" id="page1"></div>
+</div>
+<div id="pagedots"><i class="pagedot on"></i><i class="pagedot"></i></div>
+<div id="dock"></div>
+</section>
+<section id="appview" class="screen">
+<header class="appheader"><button id="appback">‹ 返回</button><h2 id="apptitle">App</h2><button id="appmore">•••</button></header>
+<div class="appbody" id="appbody"><div id="appbody-content"></div></div>
+<div id="appfooter"></div>
+</section>
+<div id="bubble-image-viewer" onclick="closeBubbleImage()"><button aria-label="關閉">×</button><img id="bubble-image-large" alt="Bubble 圖片"></div><div id="overlay"><div class="sheet" id="sheet"></div></div>
+<div id="homebar"></div><div id="gesturelayer"></div><div id="toast"></div>
+</div></div>
+<script>
+const APPS=[
+['kakao','KakaoTalk','▰','icon-kakao'],['instagram','Instagram','◎','icon-ig'],['x','X','𝕏','icon-x'],['bubble','STARSHIP bubble','♡','icon-bubble'],
+['berriz','Berriz','B','icon-berriz'],['youtube','YouTube','▶','icon-yt'],['camera','Camera','◉','icon-camera'],['photos','Photos','✿','icon-photos'],
+['calendar','Calendar','2','icon-calendar'],['melon','Melon','♪','icon-melon'],['maps','Maps','⌖','icon-maps'],['weather','Weather','☀','icon-weather'],
+['mail','Mail','✉','icon-mail'],['game','Game','▣','icon-game'],['wallet','Wallet','▰','icon-wallet'],['clock','Clock','◷','icon-clock'],
+['translate','Translate','文','icon-translate'],['food','Food Delivery','⌂','icon-food'],['taxi','Taxi','T','icon-taxi'],['health','Health','✚','icon-health'],['notes','Notes','▤','icon-notes'],
+['phone','Phone','☎','icon-phone'],['messages','Messages','●','icon-msg'],['settings','Settings','⚙','icon-settings'],['calculator','Calculator','＋','icon-calc']
+];
+const dockIds=['phone','messages','settings','calculator'];
+const state={unlocked:false,page:0,app:null,day:0,minute:480,pass:'',saved:false,events:[],read:{},blocked:[],selectedChat:'성민이',calc:'0',calcPrev:null,calcOp:null,calcNew:false,mealCart:[],calls:[],messages:[],notifications:[],posts:[],photos:[],manualSaves:[],ending:false,afterEnding:false};
+const dates=['2026/11/02','2026/11/03','2026/11/04','2026/11/05','2026/11/06','2026/11/07','2026/11/08','2026/11/09','2026/11/10','2026/11/11'];
+const schedule=[
+['08:00','起床／168 宿舍','09:30','公司行程確認','13:00','練習室排練','18:00','宿舍休息'],
+['10:00','舞蹈練習','14:00','錄音室錄音','19:00','自由時間'],
+['09:00','團體內容拍攝','15:30','個人休息','20:00','宿舍晚餐'],
+['凌晨 03:30','Afterglow 事前錄影','11:00','休息／移動','17:00','音樂節目直播'],
+['11:00','品牌拍攝','16:00','練習室','20:00','自由時間'],
+['休息日','個人時間','15:00','成員聚餐','晚上','自由活動'],
+['10:30','舞蹈練習','14:30','團體練習','19:00','休息'],
+['凌晨 04:00','Afterglow 事前錄影','12:00','休息','18:00','直播行程'],
+['13:00','內容拍攝','16:00','公司會議','晚上','自由時間'],
+['11:00','最終行程確認','15:00','團體活動','20:00','十日回顧']
+];
+const members=['박세림','마앨런','구정모','서우빈','함원진','강민희','송형준','김태영','안성민'];
+
+// Ten-day connected story: every app reveals a different piece of the same fictional schedule arc.
+// These are in-game fictional events, not claims about CRAVITY's real private activities.
+const storyLines={
+  kakao:[
+    [0,'11/02 08:06','성민이','오늘 회사에서 특별 무대 얘기 나온대. 어제 말한 그 편곡 파일도 챙겨 와.'],
+    [1,'11/03 13:22','CRAVITY 단체방','원진：후렴 동선 바뀐 거 확인했지? 정모：응, 새 버전으로 맞춰 볼게.'],
+    [2,'11/04 20:41','우빈형','연습 영상 보니까 마지막 대형만 다시 맞추면 될 것 같아. 밥 먹고 조금만 더 보자.'],
+    [3,'11/05 05:12','매니저님','사전 녹화 수고했어요. 오늘 공개되는 건 공식 티저뿐이니 개인 촬영분은 올리지 말아 주세요.'],
+    [4,'11/06 21:18','성민이','오늘 팬들 반응 봤어? 아직 다들 콘셉트 추측만 하더라 ㅋㅋ'],
+    [5,'11/07 16:03','168 dorm','민희：쉬는 날인데 왜 다들 거실에 모였어ㅋㅋ 세림：저녁 같이 먹자고 했잖아.'],
+    [6,'11/08 22:10','성민이','오늘은 좀 피곤해 보이더라. 내일 끝나고 잠깐 얘기하자.'],
+    [7,'11/09 06:20','매니저님','오늘 사전 녹화는 예정대로 진행합니다. 이동 시간만 다시 확인해 주세요.'],
+    [8,'11/10 19:44','CRAVITY 단체방','형준：비하인드 촬영본 확인했어요. 세림：다들 고생했어. 마지막까지 잘 마무리하자.'],
+    [9,'11/11 20:16','성민이','열흘 동안 진짜 바빴다. 그래도 같이 끝내서 다행이야. 오늘은 푹 쉬자.']
+  ],
+  mail:[
+    [0,'STARSHIP · 07:40','特別企劃行程通知','本週將拍攝一段尚未公開的特別舞台內容，暫定名稱為「Afterglow」。正式公開前請勿自行上傳工作素材。'],
+    [1,'Manager · 18:10','編曲版本更新','製作組已提供第二版音源，11/3 練習時請以新版本確認段落與走位。'],
+    [3,'Music Show · 02:15','事前錄影提醒','今日凌晨完成事前錄影；正式舞台片段與幕後素材將分開管理。'],
+    [6,'STARSHIP · 10:00','拍攝日程微調','因場地安排，幕後花絮拍攝順延至 11/10，原定練習時間不變。'],
+    [8,'Manager · 15:30','最終素材確認','請於今日確認幕後影片字幕與成員出鏡順序，公開時間以官方公告為準。'],
+    [9,'STARSHIP · 18:00','企劃結案通知','Afterglow 特別舞台企劃拍攝完成，感謝全體成員與工作人員。']
+  ],
+  x:[
+    [0,'粉絲動態','有人注意到 CRAVITY 這週的行程好像比平常密集。'],
+    [2,'luvity_daily','今天練習室相關的照片好像有不同版本的服裝，會不會有新內容？（猜測）'],
+    [3,'unknown_user','看到有人在討論凌晨的拍攝，不過目前沒有可靠資訊，先不要亂傳吧。'],
+    [4,'cravity_topic','官方只放了短短一段預告，大家對 Afterglow 的概念猜得完全不一樣ㅋㅋ'],
+    [6,'fan_archive','有人把官方已公開的預告片段整理在一起了，等待正式消息。'],
+    [8,'luvity_daily','官方幕後影片的預告出來了！看起來大家真的準備了很久。'],
+    [9,'CRAVITY update','오늘도 수고했어. Afterglow 무대 오래 기억할게 💙']
+  ],
+  berriz:[
+    [0,'luvity_01','이번 주에 특별한 촬영이 있나 봐요. 멤버들 건강하게 활동했으면 좋겠어요.'],
+    [3,'vity_archive','공식 티저에 나온 조명 색감 예쁘다… 무대 콘셉트가 뭘까요?'],
+    [4,'luvity_world','아직 공개된 내용만 보고 기다리기! 추측은 추측으로 남겨 둬요.'],
+    [7,'fan_note','사전 녹화 다녀온 분들 모두 수고했어요. 정확한 후기는 공식 영상 기다릴게요.'],
+    [8,'vity_archive','비하인드 예고편 봤어요? 연습 과정도 공개되면 좋겠다.'],
+    [9,'luvity_01','열흘 동안 준비한 무대 정말 고생 많았어요. 다음 활동도 응원합니다!']
+  ],
+  bubble:[
+    [0,'김태영 Bubble','오늘 일정이 조금 바빠요 ㅎㅎ 그래도 좋은 거 준비하고 있으니까 기대해 주세요! 밥 꼭 챙겨 먹기.'],
+    [2,'김태영 Bubble','연습하고 왔어요. 오늘은 새 버전으로 맞춰 봤는데 생각보다 재밌었어요ㅋㅋ'],
+    [3,'안성민 Bubble','오늘 새벽부터 움직인 사람들 많죠? 따뜻한 거 먹고 푹 쉬어요.'],
+    [5,'김태영 Bubble','오늘은 쉬는 날! 멤버들이랑 맛있는 거 먹으려고요.'],
+    [7,'안성민 Bubble','요즘 날씨가 갑자기 쌀쌀해졌어요. 겉옷 챙겨 입기!'],
+    [9,'김태영 Bubble','열심히 준비한 무대 잘 봐 줘서 고마워요. 오늘은 진짜 푹 잘 수 있겠다 ㅎㅎ']
+  ],
+  youtube:[
+    [3,'CRAVITY 공식','Afterglow｜Special Stage Teaser','官方短版預告上架；完整舞台尚未公開。'],
+    [8,'CRAVITY 공식','Afterglow｜Behind the Scenes','幕後影片上架，內容包含練習片段、造型確認與成員訪談。'],
+    [9,'성민이 개인 채널','촬영 끝나고 짧은 브이로그','性珉上傳一段簡短日常影片，記錄工作結束後的收工時刻。']
+  ],
+  melon:[
+    [0,'練習清單','Afterglow Demo 01','公司提供的練習用暫存音源，尚非正式發行歌曲。'],
+    [2,'練習清單','Afterglow Demo 02','更新版音源，對應本週重新調整的段落。'],
+    [3,'最近聆聽','CRAVITY 舞台曲目','事前錄影前確認舞台曲目順序。'],
+    [8,'最近聆聽','Afterglow Stage Mix','拍攝完成後的內部整理名稱，並非公開單曲。']
+  ],
+  calendar:[
+    [0,'11/02','企劃確認與初次排練','公司說明 Afterglow 特別舞台企劃。'],
+    [1,'11/03','舞蹈與編曲調整','依照第二版音源重新確認走位。'],
+    [2,'11/04','團體內容拍攝','完成第一輪練習紀錄。'],
+    [3,'11/05','凌晨事前錄影／傍晚直播行程','完成舞台錄製，白天安排休息。'],
+    [4,'11/06','品牌拍攝與練習','官方釋出短版預告。'],
+    [5,'11/07','休息與成員聚餐','沒有正式工作行程。'],
+    [6,'11/08','舞蹈練習與行程微調','幕後拍攝改至 11/10。'],
+    [7,'11/09','凌晨事前錄影／傍晚直播行程','第二次舞台相關工作。'],
+    [8,'11/10','幕後內容拍攝與素材確認','官方幕後影片上架。'],
+    [9,'11/11','最終行程與企劃結案','Afterglow 拍攝正式完成。']
+  ],
+  photos:[
+    [0,'11/02','練習室白板','拍下當天排練段落與走位備忘。'],
+    [2,'11/04','團體練習合照','九個人練習結束後的合照；素材目前以佔位圖呈現。'],
+    [3,'11/05','凌晨待機室','事前錄影當天的工作紀錄，未公開。'],
+    [5,'11/07','宿舍晚餐','休息日成員聚餐的生活照。'],
+    [8,'11/10','幕後拍攝花絮','Afterglow 拍攝結束前的紀錄。'],
+    [9,'11/11','收工合照','十日企劃結束後的合照。']
+  ],
+  notes:[
+    [0,'11/02','Afterglow 待辦','確認新音源、護膝、黑色外套；不要把未公開素材放上 SNS。'],
+    [2,'11/04','練習備忘','最後八拍的方向要再確認。明天凌晨錄影，記得提早休息。'],
+    [4,'11/06','粉絲反應','大家在猜概念，但目前只公開了官方預告，不要自己補充細節。'],
+    [7,'11/09','明天拍攝','幕後訪談要確認服裝；拍攝結束後記得把道具交還。'],
+    [9,'11/11','完成','十天的企劃結束。下次想把練習過程也好好記錄下來。']
+  ],
+  translate:[
+    [0,'오늘 특별 무대 준비 들어간대.','聽說要開始準備特別舞台了。'],
+    [2,'두 번째 버전으로 다시 맞춰 볼게요.','我們會用第二個版本重新確認。'],
+    [3,'개인 촬영분은 공개하지 말아 주세요.','請不要公開個人拍攝的素材。'],
+    [6,'촬영 일정이 하루 미뤄졌어요.','拍攝行程延後了一天。'],
+    [8,'최종 영상 확인 부탁드립니다.','請協助確認最終影片。']
+  ],
+  food:[
+    [0,'11/02 12:20','練習日午餐','太榮在公司確認行程後，和成員一起訂了簡單午餐。'],
+    [3,'11/05 11:40','事前錄影後補餐','凌晨工作結束，成員們回到休息室後一起補充早餐。'],
+    [5,'11/07 18:10','休息日聚餐','168 宿舍先討論晚餐，其他成員稍晚也一起加入。'],
+    [7,'11/09 12:30','錄影後熱食','天氣轉涼，大家選了熱湯和飯類。'],
+    [9,'11/11 20:30','收工晚餐','企劃結束後的簡單慶祝晚餐。']
+  ],
+  taxi:[
+    [0,'11/02','168 宿舍 → STARSHIP','企劃確認日的早上移動。'],
+    [3,'11/05','電視台 → 168 宿舍','凌晨事前錄影結束後返宿舍休息。'],
+    [6,'11/08','168 宿舍 → 練習室','依照更新後的行程前往練習。'],
+    [8,'11/10','STARSHIP → 拍攝場地','幕後拍攝日的工作移動。']
+  ],
+  weather:[
+    [0,'首爾多雲','早晚偏涼，出門帶薄外套。'],
+    [3,'凌晨低溫','事前錄影時間較早，建議準備保暖外套。'],
+    [5,'晴時多雲','適合休息日外出用餐。'],
+    [7,'轉涼有風','凌晨移動時體感較低，記得保暖。'],
+    [9,'晴朗','企劃收尾日，天氣穩定。']
+  ],
+  phone:[
+    [3,'未知號碼 · 未接來電','凌晨錄影期間出現一次未顯示身分的來電；沒有留下語音。'],
+    [6,'매니저님 · 已接聽','經紀人提醒近期有不明訊息，遇到困擾可交由公司窗口處理。'],
+    [8,'박세림 · 已接聽','確認拍攝結束後一起回宿舍。']
+  ],
+  messages:[
+    [3,'未知號碼','오늘도 회사 가는 거 맞지?','不明帳號傳來不必要的詢問，未提供回覆。'],
+    [6,'매니저님','모르는 연락은 답하지 말고 캡처해서 전달해 주세요.','經紀人提醒不要回覆陌生聯絡，交由公司處理。'],
+    [8,'성민이','끝나고 숙소에서 봐 ㅋㅋ','性珉確認收工後在宿舍碰面。']
+  ],
+  clock:[
+    [0,'08:00','一般工作日鬧鐘','起床後先確認 09:30 公司行程。'],
+    [3,'02:30','事前錄影日','隔日凌晨工作，前一晚需提早休息。'],
+    [5,'09:00','休息日鬧鐘','休息日沒有早晨公司集合。'],
+    [7,'03:00','第二次事前錄影','凌晨移動前確認保暖衣物。']
+  ],
+  game:[
+    [1,'節奏遊戲紀錄','練習結束後短暫玩了一局，沒有影響隔天行程。'],
+    [5,'休息日紀錄','成員聚餐前在宿舍玩了一會兒。'],
+    [9,'遊戲截圖','十日企劃結束，遊戲紀錄停留在收工當晚。']
+  ]
+};
+function storyPanel(appId){
+  const rows=storyLines[appId];
+  if(!rows) return '';
+  const visible=rows.filter(r=>r[0]<=state.day);
+  if(!visible.length) return `<div class="card"><b>劇情紀錄</b><p class="muted small">這條線索還沒有出現，隨著日期推進更新。</p></div>`;
+  return `<div class="card" style="border:1px solid #d9d9df"><div class="row"><b>Afterglow｜相關紀錄</b><span class="pill">遊戲劇情</span></div><p class="muted tiny">依照遊戲日期逐步更新 · 非真實公開消息</p>${visible.map(r=>`<div class="item"><div class="muted tiny">${dates[r[0]]} · ${r[1]}</div>${r.length>3?`<b>${r[2]||''}</b><p class="small" style="margin:5px 0 0">${r[3]||''}</p>`:`<p class="small" style="margin:5px 0 0">${r[2]||''}</p>`}</div>`).join('')}</div>`;
+}
+
+const chatNames=['성민이','CRAVITY 단체방','세림형','런이형','정모형','우빈형','원진형','민희형','형준형','매니저님','168 dorm'];
+const chatData={
+'성민이':[['11/01 22:18','안성민','내일 일찍 일어나야 되는 거 알지'],['11/01 22:19','김태영','알지 알지 ㅋㅋ'],['11/01 22:20','안성민','맨날 알지만 못 일어나잖아'],['11/02 07:52','안성민','일어났어? 오늘 일정 확인했어?']],
+'CRAVITY 단체방':[['11/01 19:10','함원진','내일 다들 늦지 말기ㅋㅋ'],['11/01 19:12','강민희','태영이부터 걱정해야 되는 거 아님?'],['11/01 19:13','김태영','왜 나야 ㅋㅋㅋ'],['11/01 19:14','박세림','다들 푹 자고 내일 보자']],
+'세림형':[['11/01 20:15','박세림','태영아 내일 아침에 같이 내려가자'],['11/01 20:16','김태영','넵 형 ㅎㅎ']],
+'런이형':[['11/01 18:30','마앨런','태영아 밥 먹었어?'],['11/01 18:32','김태영','아직요 형']],
+'정모형':[['11/01 21:02','구정모','내일 연습실 몇 시까지 가면 돼?'],['11/01 21:03','김태영','아마 10시 전이요']],
+'우빈형':[['11/01 20:41','서우빈','아침에 먹을 거 챙겨둘게'],['11/01 20:42','김태영','형 최고']],
+'원진형':[['11/01 23:01','함원진','태영아 내일 컨디션 괜찮아?'],['11/01 23:02','김태영','완전 괜찮지 ㅋㅋ']],
+'민희형':[['11/01 19:33','강민희','태영아 내 충전기 봤어?'],['11/01 19:34','김태영','아니요 ㅋㅋ']],
+'형준형':[['11/01 22:02','송형준','태영아 내일 추울 수도 있대 겉옷 챙겨'],['11/01 22:03','김태영','오키 형']],
+'매니저님':[['11/01 18:00','매니저님','내일 9시 30분까지 회사로 와 주세요.'],['11/01 18:01','김태영','네 확인했습니다.']],
+'168 dorm':[['11/01 21:15','박세림','내일 아침 다 같이 먹자'],['11/01 21:16','강민희','태영이 늦잠 자면 우리끼리 먹음ㅋㅋ'],['11/01 21:17','김태영','아니거든요']]
+};
+function el(id){return document.getElementById(id)}
+function toast(msg){el('toast').textContent=msg;el('toast').style.display='block';setTimeout(()=>el('toast').style.display='none',1800)}
+function save(){const s={day:state.day,minute:state.minute,events:state.events,read:state.read,blocked:state.blocked,calls:state.calls,messages:state.messages,notifications:state.notifications,mealCart:state.mealCart,afterEnding:state.afterEnding,chatReplies:state.chatReplies||{}};localStorage.setItem('taeyoungPhoneSave',JSON.stringify(s));state.saved=true}
+function load(){try{const s=JSON.parse(localStorage.getItem('taeyoungPhoneSave')||'null');if(s)Object.assign(state,s)}catch(e){}}
+function timeStr(){let m=state.minute;return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function updateClock(){el('status-time').textContent=timeStr();el('locktime').textContent=timeStr();el('lockdate').textContent=['11月2日 星期一','11月3日 星期二','11月4日 星期三','11月5日 星期四','11月6日 星期五','11月7日 星期六','11月8日 星期日','11月9日 星期一','11月10日 星期二','11月11日 星期三'][state.day]||'11月11日 星期三'}
+function iconArtwork(id){
+const svg=(inner)=>`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
+const white=(inner)=>svg(`<g fill="none" stroke="#fff" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round">${inner}</g>`);
+const art={
+ kakao:svg(`<path d="M30 10C17.8 10 8 17.6 8 27c0 6.1 4.2 11.5 10.6 14.5l-2.2 8.2 10-5.4c1.2.2 2.4.3 3.6.3 12.2 0 22-7.6 22-17S42.2 10 30 10Z" fill="#241f1a"/><text x="30" y="32" fill="#fee500" font-size="11" font-weight="800" text-anchor="middle" font-family="Arial">TALK</text>`),
+ instagram:svg(`<defs><linearGradient id="igGrad" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#ffdc80"/><stop offset=".35" stop-color="#fcaf45"/><stop offset=".62" stop-color="#dd2a7b"/><stop offset=".82" stop-color="#8134af"/><stop offset="1" stop-color="#515bd4"/></linearGradient></defs><rect x="3" y="3" width="54" height="54" rx="15" fill="url(#igGrad)"/><rect x="14" y="14" width="32" height="32" rx="10" fill="none" stroke="white" stroke-width="3.5"/><circle cx="30" cy="30" r="8" fill="none" stroke="white" stroke-width="3.5"/><circle cx="41" cy="19" r="2.5" fill="white"/>`),
+ x:svg(`<path d="M13 10h10.5l23.5 40H36.5L13 10Zm0 40 16.2-18.7M31 29.2 47 10" fill="none" stroke="white" stroke-width="5" stroke-linecap="square"/>`),
+ bubble:svg(`<path d="M12 13h36a5 5 0 0 1 5 5v21a5 5 0 0 1-5 5H29L17 52v-8h-5a5 5 0 0 1-5-5V18a5 5 0 0 1 5-5Z" fill="#fff"/><text x="30" y="36" fill="#2796e8" font-size="18" font-weight="800" text-anchor="middle" font-family="Arial">b</text>`),
+ berriz:svg(`<path d="M17 10h26a8 8 0 0 1 8 8v24a8 8 0 0 1-8 8H17a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8Z" fill="#f15b78"/><path d="M22 20h11c8 0 12 4 12 10s-4 10-12 10H22V20Zm8 7v6h4c2 0 3-1 3-3s-1-3-3-3h-4Z" fill="white"/>`),
+ youtube:svg(`<rect x="7" y="14" width="46" height="32" rx="10" fill="#ff0033"/><path d="m26 22 14 8-14 8V22Z" fill="white"/>`),
+ camera:svg(`<defs><linearGradient id="cam" x2="0" y2="1"><stop stop-color="#666"/><stop offset="1" stop-color="#111"/></linearGradient></defs><rect x="4" y="14" width="52" height="36" rx="9" fill="url(#cam)" stroke="#aaa" stroke-width="1.5"/><path d="M18 14 22 9h16l4 5" fill="#444" stroke="#aaa" stroke-width="1.5"/><circle cx="30" cy="32" r="12" fill="#15191d" stroke="#aaa" stroke-width="2"/><circle cx="30" cy="32" r="7" fill="#24465b" stroke="#6c8798" stroke-width="2"/><circle cx="26" cy="28" r="2" fill="#fff"/>`),
+ photos:svg(`<g transform="translate(30 30)"><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#ff625d"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#ffb84d" transform="rotate(45)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#ffe15b" transform="rotate(90)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#63c96b" transform="rotate(135)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#4bb9e8" transform="rotate(180)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#6579e8" transform="rotate(225)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#a46be8" transform="rotate(270)"/><ellipse cx="0" cy="-12" rx="7" ry="13" fill="#ed6eb0" transform="rotate(315)"/></g>`),
+ calendar:svg(`<rect x="7" y="9" width="46" height="44" rx="7" fill="white"/><path d="M7 19h46" stroke="#ff453a" stroke-width="7"/><path d="M19 6v9M41 6v9" stroke="#888" stroke-width="3" stroke-linecap="round"/><text x="30" y="43" fill="#222" font-size="24" font-weight="700" text-anchor="middle" font-family="Arial">2</text>`),
+ melon:svg(`<path d="M30 9c-12 0-21 9-21 21s9 21 21 21 21-9 21-21S42 9 30 9Z" fill="#111"/><path d="M22 19v22l19-11-19-11Z" fill="#00d37f"/>`),
+ maps:svg(`<rect x="5" y="5" width="50" height="50" rx="10" fill="#fff"/><path d="m8 17 14-7 16 6 14-7v34l-14 7-16-6-14 7V17Z" fill="#d8f0e1"/><path d="m22 10 0 34M38 16v34" stroke="#fff" stroke-width="2"/><path d="M16 39c8-5 9-19 19-20 6-1 9 4 10 8" fill="none" stroke="#4285f4" stroke-width="4" stroke-linecap="round"/><path d="M30 19c-5 0-9 4-9 9 0 7 9 17 9 17s9-10 9-17c0-5-4-9-9-9Z" fill="#ea4335"/><circle cx="30" cy="28" r="3" fill="white"/>`),
+ weather:svg(`<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#65c8ff"/><stop offset="1" stop-color="#2875d0"/></linearGradient></defs><rect width="60" height="60" rx="14" fill="url(#sky)"/><circle cx="39" cy="21" r="10" fill="#ffd34d"/><path d="M13 42c0-7 5-12 12-12 2-8 14-10 19-2 7 0 11 5 11 11 0 6-5 10-12 10H24c-7 0-11-2-11-7Z" fill="#fff"/>`),
+ mail:svg(`<path d="M8 15h44v31H8z" fill="#fff"/><path d="m9 17 21 17 21-17" fill="none" stroke="#1684e8" stroke-width="4" stroke-linejoin="round"/><path d="M9 45 23 32M51 45 37 32" stroke="#7abaff" stroke-width="3"/>`),
+ game:svg(`<rect x="8" y="18" width="44" height="27" rx="12" fill="#26272d" stroke="#a7e6c5" stroke-width="2"/><path d="M19 31h12M25 25v12" stroke="#a7e6c5" stroke-width="3" stroke-linecap="round"/><circle cx="41" cy="28" r="2.5" fill="#f5a3c7"/><circle cx="46" cy="35" r="2.5" fill="#f5a3c7"/>`),
+ wallet:svg(`<rect x="8" y="13" width="44" height="36" rx="7" fill="#25262b" stroke="#fff" stroke-width="2"/><path d="M8 22h44" stroke="#aaa" stroke-width="2"/><path d="M36 29h16v12H36a6 6 0 0 1 0-12Z" fill="#555" stroke="#fff" stroke-width="1.5"/><circle cx="40" cy="35" r="2" fill="white"/>`),
+ clock:svg(`<circle cx="30" cy="30" r="23" fill="white" stroke="#222" stroke-width="1.5"/><path d="M30 12v3M30 45v3M12 30h3M45 30h3" stroke="#555" stroke-width="2"/><path d="M30 30V16M30 30l12 7" stroke="#222" stroke-width="2.8" stroke-linecap="round"/><circle cx="30" cy="30" r="2.5" fill="#ff453a"/>`),
+ translate:svg(`<rect x="7" y="11" width="31" height="37" rx="5" fill="#4285f4"/><rect x="22" y="15" width="31" height="35" rx="5" fill="#fff" stroke="#d6d6d6"/><text x="15" y="35" fill="white" font-size="16" font-weight="700">文</text><text x="30" y="38" fill="#4285f4" font-size="14" font-weight="700">A</text>`),
+ food:svg(`<rect x="5" y="7" width="50" height="46" rx="12" fill="#fff"/><path d="M17 27h26l-3 17H20l-3-17Z" fill="#ff775e"/><path d="M22 25c0-7 16-7 16 0" fill="none" stroke="#ff775e" stroke-width="3" stroke-linecap="round"/><path d="M22 18h16" stroke="#ff775e" stroke-width="3" stroke-linecap="round"/>`),
+ taxi:svg(`<rect x="6" y="22" width="48" height="23" rx="6" fill="#ffd43b" stroke="#222" stroke-width="1.5"/><path d="m15 22 5-10h20l6 10" fill="#ffd43b" stroke="#222" stroke-width="1.5"/><path d="M24 15h12" stroke="#222" stroke-width="2"/><circle cx="17" cy="45" r="5" fill="#222"/><circle cx="43" cy="45" r="5" fill="#222"/>`),
+ health:svg(`<path d="M30 50 10 31C-1 18 16 5 27 17l3 4 3-4C44 5 61 18 50 31L30 50Z" fill="#ff375f"/><path d="M12 31h10l5-9 7 17 5-8h9" fill="none" stroke="white" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>`),
+ notes:svg(`<rect x="9" y="6" width="42" height="48" rx="5" fill="#fff"/><path d="M9 17h42" stroke="#ffd34d" stroke-width="9"/><path d="M17 27h27M17 34h27M17 41h22" stroke="#b7b7b7" stroke-width="2" stroke-linecap="round"/>`),
+ phone:svg(`<circle cx="30" cy="30" r="29" fill="#30d158"/><path d="M19 12c-3 1-6 5-5 10 2 11 13 22 24 24 5 1 9-2 10-5l-8-7-6 5c-5-2-10-7-12-12l5-6-8-9Z" fill="white"/>`),
+ messages:svg(`<circle cx="30" cy="30" r="29" fill="#30d158"/><path d="M12 27c0-9 8-16 18-16s18 7 18 16-8 16-18 16c-2 0-5-.4-7-1.2L13 46l2-9c-2-3-3-6-3-10Z" fill="white"/><path d="M21 29h18" stroke="#30b95a" stroke-width="3" stroke-linecap="round"/>`),
+ settings:svg(`<defs><linearGradient id="gear" x2="0" y2="1"><stop stop-color="#c7c7cc"/><stop offset="1" stop-color="#777980"/></linearGradient></defs><circle cx="30" cy="30" r="27" fill="url(#gear)"/><path d="M27 8h6l2 6 5 2 5-3 4 5-3 5 2 5 6 2v6l-6 2-2 5 3 5-5 4-5-3-5 2-2 6h-6l-2-6-5-2-5 3-4-5 3-5-2-5-6-2v-6l6-2 2-5-3-5 5-4 5 3 5-2 2-6Z" fill="#555960"/><circle cx="30" cy="32" r="10" fill="#b9bbc0"/><circle cx="30" cy="32" r="5" fill="#65686f"/>`),
+ calculator:svg(`<rect x="7" y="7" width="46" height="46" rx="9" fill="#ff9f0a"/><rect x="13" y="13" width="34" height="10" rx="2" fill="#332b20"/><g fill="#fff"><circle cx="18" cy="32" r="3"/><circle cx="30" cy="32" r="3"/><circle cx="42" cy="32" r="3"/><circle cx="18" cy="44" r="3"/><circle cx="30" cy="44" r="3"/></g><circle cx="42" cy="44" r="3" fill="#332b20"/>`)
+};
+return art[id]||svg(`<circle cx="30" cy="30" r="20" fill="white"/><text x="30" y="37" text-anchor="middle" font-size="20" fill="#333">?</text>`)
+}
+function makeIcon(app){let d=APPS.find(a=>a[0]===app);const artwork=app==='bubble'?`<img alt="STARSHIP bubble" src="data:image/png;base64,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">`:iconArtwork(d[0]);return `<button class="appicon" data-app="${d[0]}" aria-label="${d[1]}"><i class="iconbox ${d[3]}">${artwork}</i><span>${d[1]}</span></button>`}
+function buildHome(){el('page0').innerHTML=APPS.slice(0,12).map(a=>makeIcon(a[0])).join('');el('page1').innerHTML=APPS.slice(12,21).map(a=>makeIcon(a[0])).join('');el('dock').innerHTML=dockIds.map(makeIcon).join('');}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));el(id).classList.add('active');el('homebar').style.display=id==='lockscreen'?'none':'block';el('homebar').classList.toggle('dark',id==='appview');}
+function unlockStart(){el('unlock').classList.add('show');state.pass='';drawDots()}
+function drawDots(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('filled',i<state.pass.length))}
+function enterKey(k){if(k==='clear'){state.pass=''}else if(k==='del'){state.pass=state.pass.slice(0,-1)}else if(state.pass.length<4){state.pass+=k}
+drawDots();if(state.pass.length===4){if(state.pass==='0801'){el('unlock').classList.remove('show');state.unlocked=true;showScreen('home');toast('已解鎖');save()}else{el('pass-error').textContent='密碼錯誤';setTimeout(()=>{state.pass='';drawDots();el('pass-error').textContent=''},700)}}}
+function openApp(id){state.app=id;const a=APPS.find(x=>x[0]===id);el('appview').classList.remove('bubble-mode','phone-mode','berriz-mode');el('statusbar').classList.remove('bubble-status');el('apptitle').textContent=a?a[1]:id;el('appback').style.visibility='visible';showScreen('appview');renderApp(id);save()}
+function closeApp(){state.app=null;el('appview').classList.remove('bubble-mode','phone-mode','berriz-mode');el('statusbar').classList.remove('bubble-status');showScreen('home')}
+function header(title,body,opts={}){el('apptitle').textContent=title;el('appbody').style.padding='14px 14px 30px';el('appbody').classList.toggle('dark',!!opts.dark);el('appbody-content').innerHTML=body}
+function appRow(title,sub='',right=''){return `<div class="item"><div class="row"><b>${title}</b><span class="muted small">${right}</span></div>${sub?`<div class="muted small" style="margin-top:4px">${sub}</div>`:''}</div>`}
+function phoneAvatar(name){
+ const initials={'성민이':'성','매니저님':'M','박세림':'世','김태영':'太','원진':'進','정모':'謨','형준':'俊','민희':'熙','우빈':'彬','未知號碼':'?'};
+ return `<span class="phone-avatar">${initials[name]||name.slice(0,1)}</span>`;
+}
+function phoneFrame(content,tab='calls'){
+ const tabs=[['calls','◷','通話'],['contacts','♙','聯絡人'],['keypad','▦','鍵盤'],['search','⌕','搜尋']];
+ return `<div class="phone-ui"><div class="phone-scroll" id="phone-scroll">${content}</div><nav class="phone-nav">${tabs.map(([id,icon,label])=>`<button class="${tab===id?'active':''}" onclick="phoneTab('${id}')"><b>${icon}</b><span>${label}</span></button>`).join('')}</nav></div>`;
+}
+function phoneTab(tab){
+ const root=el('appbody-content'); if(!root)return;
+ root.innerHTML=phoneFrame(phoneContent(tab),tab);
+ el('appbody').style.padding='0';
+}
+function phoneContent(tab){
+ if(tab==='calls'){
+  const recent=[...(state.calls||[]).slice().reverse().map(call=>[call.name,call.accepted?'傳入通話 · 已接聽':'未接來電',call.time,'↙']),
+   ['성민이','傳入通話 · 已接聽','今天 07:12','↙'],
+   ['매니저님','傳入通話 · 已接聽','昨天 21:30','↙'],
+   ['未知號碼','未接來電','昨天 02:14','↙'],
+   ['박세림','傳入通話 · 已接聽','11月1日','↙']
+  ];
+  return `<div class="phone-topline"><div class="phone-title">通話</div><button class="phone-topbtn" onclick="incomingCall()">模擬來電</button></div>
+   <div class="phone-search" onclick="phoneTab('search')">⌕　搜尋</div>
+   <div class="phone-section-title">常用聯絡人</div>
+   <div class="phone-favs">${[['성민이','成'],['매니저님','M'],['박세림','世'],['정모형','謨']].map(([n])=>`<button class="phone-fav" onclick="phoneContact('${n}')">${phoneAvatar(n)}<span class="phone-fav-name">${n}</span></button>`).join('')}</div>
+   <div class="phone-section-title">最近通話 <button class="phone-topbtn" style="float:right;font-size:13px" onclick="toast('通話紀錄僅供瀏覽')">編輯</button></div>
+   <div class="phone-list">${recent.map(([n,sub,time,arrow])=>`<button class="phone-callrow" onclick="phoneContact('${n}')">${phoneAvatar(n)}<span class="phone-row-main"><span class="phone-row-name">${n}</span><span class="phone-row-sub">${sub}</span></span><span class="phone-row-time">${time}　<span style="color:#999">ⓘ</span></span></button>`).join('')}</div>
+   <p class="phone-empty">僅顯示手機內的模擬通話紀錄</p>`;
+ }
+ if(tab==='contacts'){
+  const names=['성민이','매니저님','박세림','정모형','원진형','형준형','민희형','우빈형'];
+  return `<div class="phone-topline"><div class="phone-title">聯絡人</div><button class="phone-topbtn" onclick="toast('聯絡人資料為唯讀')">＋</button></div><div class="phone-search" onclick="phoneTab('search')">⌕　搜尋聯絡人</div><div class="phone-list">${names.map(n=>`<button class="phone-callrow" onclick="phoneContact('${n}')">${phoneAvatar(n)}<span class="phone-row-main"><span class="phone-row-name">${n}</span><span class="phone-row-sub">行動電話</span></span><span style="color:#aaa;padding-right:12px">›</span></button>`).join('')}</div>`;
+ }
+ if(tab==='keypad'){
+  return `<div class="phone-topline"><div class="phone-title">鍵盤</div><span></span></div><div class="phone-key-display" id="phone-number"></div><div class="phone-keypad">${[['1',''],['2','ABC'],['3','DEF'],['4','GHI'],['5','JKL'],['6','MNO'],['7','PQRS'],['8','TUV'],['9','WXYZ'],['*',''],['0','+'],['#','']].map(([n,l])=>`<button class="phone-key" onclick="phonePress('${n}')">${n}<small>${l}</small></button>`).join('')}</div><div class="phone-dial-actions"><span style="width:58px"></span><button class="phone-call-btn" onclick="toast('此模擬手機不提供主動撥出功能')">☎</button><button class="phone-backspace" onclick="phoneDelete()">⌫</button></div><p class="phone-empty">可輸入號碼；此遊戲僅模擬介面，不會撥出真實電話</p>`;
+ }
+ return `<div class="phone-topline"><div class="phone-title">搜尋</div></div><input class="phone-search-input" placeholder="姓名或電話號碼" oninput="phoneSearch(this.value)"><div id="phone-search-results" class="phone-list" style="margin-top:14px">${['성민이','매니저님','박세림','정모형','원진형','형준형','민희형','우빈형'].map(n=>`<button class="phone-callrow" onclick="phoneContact('${n}')">${phoneAvatar(n)}<span class="phone-row-main"><span class="phone-row-name">${n}</span><span class="phone-row-sub">聯絡人</span></span></button>`).join('')}</div>`;
+}
+function phonePress(n){const node=el('phone-number');if(node)node.textContent=(node.textContent+n).slice(0,20)}
+function phoneDelete(){const node=el('phone-number');if(node)node.textContent=node.textContent.slice(0,-1)}
+function phoneSearch(q){const root=el('phone-search-results');if(!root)return;const names=['성민이','매니저님','박세림','정모형','원진형','형준형','민희형','우빈형'];const found=names.filter(n=>n.toLowerCase().includes(String(q||'').toLowerCase()));root.innerHTML=found.map(n=>`<button class="phone-callrow" onclick="phoneContact('${n}')">${phoneAvatar(n)}<span class="phone-row-main"><span class="phone-row-name">${n}</span><span class="phone-row-sub">聯絡人</span></span></button>`).join('')||'<div class="phone-empty">找不到聯絡人</div>'}
+function phoneContact(name){
+ const root=el('appbody-content');if(!root)return;
+ root.innerHTML=phoneFrame(`<div class="phone-topline"><button class="phone-topbtn" onclick="phoneTab('contacts')">‹ 聯絡人</button><span></span><button class="phone-topbtn" onclick="toast('聯絡人資料為唯讀')">編輯</button></div><div class="phone-contact-head">${phoneAvatar(name)}<div class="phone-contact-name">${name}</div><div class="phone-row-sub">CRAVITY · 聯絡人</div><div class="phone-actions"><button class="phone-action" onclick="toast('此模擬手機不提供主動撥出功能')">☎ 電話</button><button class="phone-action" onclick="openApp('messages')">訊息</button></div></div><div class="phone-list"><div class="phone-callrow" style="padding:14px"><span class="phone-row-main"><span class="phone-row-sub">行動電話</span><span class="phone-row-name" style="color:#087cff">010-****-0801</span></span></div><div class="phone-callrow" style="padding:14px"><span class="phone-row-main"><span class="phone-row-sub">備註</span><span class="phone-row-name">CRAVITY</span></span></div></div>`,'contacts');
+}
+
+
+const berrizPosts=[
+ {user:'luvity_01',tag:'粉絲',time:'12분 전',text:'오늘 무대 의상 너무 잘 어울렸어요! 멤버들 표정도 너무 행복해 보여서 보는 내내 기분 좋았어요 💙',zh:'今天的舞台服裝真的很適合你們！成員們看起來也很幸福，整場看下來心情都變好了💙',likes:'2.1k',comments:84,photo:'CRAVITY · STAGE'},
+ {user:'vity_archive',tag:'照片整理',time:'38분 전',text:'이번 주 CRAVITY 공식 사진 모아 봤어요. 다들 분위기가 너무 좋아요 ✨',zh:'整理了本週 CRAVITY 官方公開的照片，大家的氛圍都好棒✨',likes:'980',comments:32,photo:'WEEKLY PHOTO'},
+ {user:'luvity_world',tag:'自由討論',time:'1시간 전',text:'다음 활동도 오래오래 응원할게요. 오늘도 고생 많았어요!',zh:'也會一直支持下一次活動。今天也辛苦了！',likes:'760',comments:21},
+ {user:'fan_note',tag:'應援',time:'3시간 전',text:'멤버들 오늘도 고생 많았어요! 따뜻한 거 먹고 푹 쉬었으면 좋겠어요 🫶',zh:'成員們今天也辛苦了！希望大家吃點熱食，好好休息🫶',likes:'421',comments:13},
+ {user:'vity_archive',tag:'粉絲貼文',time:'5시간 전',text:'공식 티저 다시 보다가 발견한 작은 디테일… 이번 콘셉트 정말 기대돼요.',zh:'重新看官方預告時發現了一個小細節……真的很期待這次的概念。',likes:'316',comments:9}
+];
+let berrizTab='home',berrizCommunityTab='전체',berrizLiked={};
+function berrizPostCard(p,i){return `<article class="berriz-post"><div class="berriz-post-head"><div class="berriz-user-avatar">${p.user.slice(0,1).toUpperCase()}</div><div><div class="berriz-user">${p.user} <span style="font-size:9px;color:#aaa;font-weight:400">· ${p.tag}</span></div><div class="berriz-post-time">${p.time}</div></div><span class="berriz-post-menu">•••</span></div><div class="berriz-post-text">${p.text}<div style="font-size:10px;color:#999;margin-top:5px">${p.zh}</div></div>${p.photo?`<div class="berriz-post-image">${p.photo}</div>`:''}<div class="berriz-post-actions"><button onclick="berrizLike(${i})">${berrizLiked[i]?'♥':'♡'} ${p.likes}</button><button onclick="berrizComments(${i})">▢ ${p.comments} 則留言</button><button onclick="toast('已收藏貼文')">♧ 收藏</button><span style="margin-left:auto">↗ 分享</span></div></article>`}
+function berrizLike(i){berrizLiked[i]=!berrizLiked[i];renderBerriz(berrizTab)}
+function berrizComments(i){const p=berrizPosts[i];const root=el('appbody-content');root.innerHTML=`<div class="berriz-screen"><div class="berriz-top"><button onclick="renderBerriz('home')" style="border:0;background:none;font-size:22px">‹</button><b>貼文</b><span></span></div><div class="berriz-scroll">${berrizPostCard(p,i)}<div class="berriz-section-card"><div class="berriz-section-title">留言 ${p.comments}</div><div class="berriz-comment"><b>luvity_day</b><br>오늘도 응원해요 💙<br><span style="color:#999">今天也會支持你們💙</span></div><div class="berriz-comment"><b>vity_lover</b><br>공식 사진 더 기다릴게요!<br><span style="color:#999">會繼續期待更多官方照片！</span></div><p style="color:#aaa;font-size:9px;margin-top:10px">粉絲社群瀏覽模式 · 不提供留言輸入</p></div></div></div>`}
+function renderBerriz(tab='home'){
+ berrizTab=tab;state.app='berriz';el('appview').classList.add('berriz-mode');el('appbody').classList.remove('dark');el('appbody').style.padding='0';
+ const top=`<div class="berriz-top"><div class="berriz-brand">berr<em>i</em>z</div><div class="berriz-top-actions"><button onclick="berrizSearch()">⌕</button><button onclick="toast('通知：目前沒有新通知')">♧</button></div></div>`;
+ const community=`<div class="berriz-community"><div class="berriz-cover"><span>CRAVITY</span><small>WE ARE VITY</small></div><div class="berriz-community-head"><div class="berriz-avatar">CRV</div><div><div class="berriz-community-name">CRAVITY</div><div class="berriz-community-sub">CRAVITY · 팬 커뮤니티 · 粉絲社群</div></div><button class="berriz-follow" onclick="toast('已追蹤 CRAVITY 社群')">追蹤中 ✓</button></div><div class="berriz-community-tabs">${[['home','首頁'],['board','게시판'],['media','媒體'],['schedule','行程']].map(([id,label])=>`<button class="${tab===id?'active':''}" onclick="renderBerriz('${id}')">${label}</button>`).join('')}</div></div>`;
+ let body='';
+ if(tab==='home'||tab==='board'){
+   body=`<div class="berriz-notice">💙 這裡是 CRAVITY 粉絲交流社群。貼文皆為粉絲分享，藝人不會在此提供私人訊息。</div><div class="berriz-feed-tools"><span>${tab==='home'?'粉絲最新貼文':'粉絲 게시판'}</span><span>最新순　⌄</span></div>${berrizPosts.map((p,i)=>berrizPostCard(p,i)).join('')}`;
+ }else if(tab==='popular'){
+   body=`<div class="berriz-section-card"><div class="berriz-section-title">🔥 粉絲熱門貼文</div><div class="berriz-feed-tools" style="padding:0 0 8px">粉絲們正在討論的內容</div></div>${berrizPosts.slice().sort((a,b)=>parseFloat(b.likes)-parseFloat(a.likes)).map((p)=>berrizPostCard(p,berrizPosts.indexOf(p))).join('')}`;
+ }else if(tab==='media'){
+   body=`<div class="berriz-section-card"><div class="berriz-section-title">CRAVITY 官方公開內容</div><div class="berriz-media-grid"><div class="berriz-media-tile"><b>PHOTO</b><span>官方照片 · 概念照與幕後花絮</span></div><div class="berriz-media-tile" style="background:linear-gradient(135deg,#1d2634,#5e7184)"><b>VIDEO</b><span>官方影音 · 舞台與影片</span></div><div class="berriz-media-tile" style="background:linear-gradient(135deg,#493b4c,#b18c9d)"><b>LIVE</b><span>直播與回放</span></div><div class="berriz-media-tile" style="background:linear-gradient(135deg,#333,#777)"><b>NOTICE</b><span>官方公告與活動資訊</span></div></div><p style="font-size:9px;color:#aaa;margin-top:10px">顯示社群內已公開的內容分類</p></div><div class="berriz-section-card"><div class="berriz-section-title">最近更新</div><div class="berriz-schedule-row"><b>▶</b><span><strong>CRAVITY｜Afterglow Behind</strong><small>官方幕後影片 · 11/10</small></span></div><div class="berriz-schedule-row"><b>▧</b><span><strong>CRAVITY Official Photo</strong><small>官方照片整理 · 11/08</small></span></div></div>`;
+ }else if(tab==='schedule'){
+   body=`<div class="berriz-section-card"><div class="berriz-section-title">社群公開行程</div>${[['11/06','Special Stage 準備','公司練習室'],['11/07','舞台排練','練習室'],['11/08','官方內容拍攝','STARSHIP'],['11/10','Behind 拍攝','公開內容'],['11/11','Afterglow 企劃結束','官方更新']].map(x=>`<div class="berriz-schedule-row"><b>${x[0]}</b><span><strong>${x[1]}</strong><small>${x[2]}</small></span></div>`).join('')}<p style="font-size:9px;color:#aaa;margin-top:9px">遊戲內社群行程示意，非真實官方公告</p></div>`;
+ }else if(tab==='my'){
+   body=`<div class="berriz-section-card" style="text-align:center;padding:25px"><div class="berriz-avatar" style="margin:0 auto 9px">영</div><b>영이의 Cabinet</b><p style="font-size:10px;color:#999">收藏的貼文與社群內容</p></div><div class="berriz-section-card"><div class="berriz-section-title">我的收藏</div><p style="font-size:10px;color:#999">收藏的貼文會顯示在這裡。</p></div>`;
+ }
+ const bottom=`<div class="berriz-bottom-tabs">${[['home','⌂','首頁'],['popular','♨','熱門'],['media','▣','媒體'],['schedule','▦','行程'],['my','♡','MY']].map(([id,ic,label])=>`<button class="${tab===id?'active':''}" onclick="renderBerriz('${id}')"><b>${ic}</b>${label}</button>`).join('')}</div>`;
+ el('appbody-content').innerHTML=`<div class="berriz-screen">${top}<div class="berriz-scroll">${tab==='search'?'':community}${tab==='search'?body:body}</div>${bottom}</div>`;
+}
+function berrizSearch(){const root=el('appbody-content');root.innerHTML=`<div class="berriz-screen"><div class="berriz-top"><button onclick="renderBerriz('home')" style="border:0;background:none;font-size:22px">‹</button><b>搜尋</b><span></span></div><div class="berriz-searchbar"><input id="berriz-q" placeholder="搜尋社群、貼文或標籤" oninput="berrizSearchFilter(this.value)"><button onclick="renderBerriz('home')">取消</button></div><div class="berriz-scroll" id="berriz-search-results"><div class="berriz-section-card">搜尋 CRAVITY 粉絲社群內容</div></div></div>`;setTimeout(()=>el('berriz-q')?.focus(),30)}
+function berrizSearchFilter(q){const root=el('berriz-search-results');if(!root)return;const list=berrizPosts.map((p,i)=>({p,i})).filter(x=>(x.p.user+x.p.text+x.p.zh).toLowerCase().includes(String(q||'').toLowerCase()));root.innerHTML=list.map(x=>berrizPostCard(x.p,x.i)).join('')||'<div class="berriz-section-card">沒有找到相關貼文</div>'}
+
+function renderApp(id){
+let c='';
+switch(id){
+case'kakao': renderKakaoList(); return;
+case'instagram': c=`<div class="card"><div class="row"><b>@mygallery.o0ty</b><span class="pill">公開帳號</span></div><p class="small muted">김태영 · CRAVITY</p><div class="row"><span>12 貼文</span><span>粉絲</span><span>追蹤中</span></div></div><div class="photo-grid">${Array.from({length:12},(_,i)=>`<div class="photo" style="background:linear-gradient(${120+i*17}deg,#555,#25272d)">公開貼文 ${i+1}<br><small>照片素材待補</small></div>`).join('')}</div><p class="muted tiny">此原型未內嵌未授權的公開照片；貼文格先以佔位畫面呈現，避免把虛構照片冒充真實貼文。</p>`;header('Instagram',c,{dark:true});break;
+case'x': c=`<div class="card dark"><b>ㄱㅌㅇ　@0tae.zip</b><p class="muted small">🔒 私人帳號 · 追蹤中：CRAVITY 官方及成員</p></div>`+[
+['CRAVITY update','오늘 무대도 수고했어! 다들 조심히 들어가 💙','2분'],
+['luvity_daily','오늘 태영이 사진 진짜 분위기 미쳤다…','18분'],
+['fan_archive','이번 주 무대 영상 모음 정리했어요.','1小時'],
+['unknown_user','오늘 이동 중에 봤다는 글이 올라왔는데…','3小時'],
+['cravity_topic','이번 주 활동 이야기 나눠요!','5小時']
+].map(p=>`<div class="card dark"><b>${p[0]}</b><p>${p[1]}</p><span class="muted tiny">${p[2]} · 動態示意</span></div>`).join('');header('X',c,{dark:true});break;
+case'berriz':renderBerriz('home');return;
+case'bubble':renderBubbleHome();return;
+case'youtube':c=`<div class="card"><b>YouTube</b><p class="muted small">首頁推薦 · 僅供觀看</p></div>`+['CRAVITY 공식 콘텐츠｜Behind the scene','CRAVITY｜舞台直拍合集','성민이의 Vlog｜오늘의 기록','CRAVITY｜練習室影片','CRAVITY｜團體綜藝'].map((x,i)=>`<div class="card" onclick="watchVideo('${x}')"><div style="height:105px;background:linear-gradient(135deg,#34363b,#17181b);border-radius:10px;display:grid;place-items:center;font-size:30px">▶</div><b>${x}</b><div class="muted tiny">頻道 · 觀看影片</div></div>`).join('');header('YouTube',c);break;
+case'melon':c=`<div class="card"><b>Melon</b><p class="muted small">CRAVITY · 我的播放清單</p></div>`+['CRAVITY – Groovy','CRAVITY – Love or Die','CRAVITY – Adrenaline','CRAVITY – Ready or Not','CRAVITY – C’est La Vie'].map(x=>appRow(x,'CRAVITY','♪')).join('')+`<div class="card"><b>最近聆聽</b><p class="small">本週播放紀錄（瀏覽模式）</p></div>`;header('Melon',c);break;
+case'maps':header('Maps',`<div class="card"><b>無法開啟</b><p>此手機的地圖 App 已停用。</p></div>`);break;
+case'weather':c=`<div class="card" style="text-align:center;padding:25px"><div class="muted">서울 · ${dates[state.day]}</div><div style="font-size:52px;margin:12px">☁️</div><div style="font-size:42px">14°</div><b>多雲</b><p class="muted small">體感 12° · 降雨機率 20%</p></div><div class="card"><b>十天天氣</b>${dates.map((d,i)=>appRow(d,['多雲','晴時多雲','晴','小雨','多雲','晴','晴時多雲','陰','多雲','晴'][i],`${12+i%4}° / ${6+i%3}°`)).join('')}</div>`;header('Weather',c);break;
+case'mail':c=`<div class="card"><b>收件匣</b><p class="muted small">只讀取 · 不可回覆或刪除</p></div>`+[
+['STARSHIP','11月行程確認','請確認本週工作行程。','今天 07:40'],
+['Manager','Re: 事前錄影集合時間','集合時間與交通安排已更新。','昨天 18:20'],
+['Brand Team','品牌合作邀請','希望邀請你參與本次企劃。','昨天 14:10'],
+['Music Show','事前錄影注意事項','請依照工作人員通知完成報到。','10/31'],
+['Newsletter','CRAVITY weekly update','本週活動資訊整理。','10/30']
+].map((m,i)=>`<div class="card" onclick="mailDetail(${i})"><b>${m[0]}</b><div>${m[1]}</div><p class="muted small">${m[2]}</p><span class="muted tiny">${m[3]}</span></div>`).join('');header('Mail',c);break;
+case'game':c=`<div class="card"><b>已安裝的遊戲</b><p class="muted small">僅顯示遊戲資訊，不提供實際遊玩。</p></div>`+['모바일 리듬 게임','퍼즐 게임','전략 게임'].map(x=>appRow(x,'已安裝 · 最近遊玩紀錄','資訊')).join('');header('Game',c);break;
+case'wallet':c=`<div class="card" style="background:linear-gradient(135deg,#202126,#050505);color:white;height:155px;border-radius:18px"><div class="row"><b>BLACK CARD</b><span>▰</span></div><div style="margin-top:48px;font-size:12px;letter-spacing:2px">••••　••••　••••　0801</div><div class="row small" style="margin-top:10px"><span>KIM TAEYOUNG</span><span>VISA</span></div></div><div class="card"><b>付款示範</b><p class="muted small">僅遊戲內模擬，不連接真實金融服務。</p><button class="action" onclick="walletPay()">模擬刷卡</button></div><div class="card"><b>票券與會員卡</b>${appRow('CRAVITY Membership','電子會員卡')}${appRow('演唱會電子票','票券資料')}</div><div class="card"><b>最近交易</b><div id="transactions">尚無交易</div></div>`;header('Wallet',c);break;
+case'clock':c=`<div class="card" style="text-align:center;padding:30px"><div style="font-size:44px">${timeStr()}</div><div class="muted">首爾 · 台北</div></div><div class="card"><b>鬧鐘</b>${appRow('07:30','每日','開啟')}${appRow('08:00','工作日','開啟')}${appRow('09:00','休息日','關閉')}</div>`;header('Clock',c);break;
+case'translate':c=`<div class="card"><b>翻譯紀錄</b><p class="muted small">僅瀏覽既有紀錄</p></div>`+[
+['오늘 일정 확인했어?','你確認今天的行程了嗎？','韓文 → 中文'],
+['조심히 들어가.','回去路上小心。','韓文 → 中文'],
+['잠깐 쉬었다가 연습하자.','休息一下再練習吧。','韓文 → 中文'],
+['Are you ready for the schedule?','準備好今天的行程了嗎？','英文 → 中文']
+].map(x=>`<div class="card"><b>${x[0]}</b><p>${x[1]}</p><span class="muted tiny">${x[2]}</span></div>`).join('');header('Translate',c);break;
+case'food':c=`<div class="card"><b>배달의민족</b><p class="muted small">168 宿舍附近 · 模擬外送</p></div>`+['김치찌개 정식','치킨 세트','마라탕','불고기 덮밥','샌드위치 세트'].map((x,i)=>`<div class="card"><div class="row"><div><b>${x}</b><div class="muted small">₩${[11000,19000,15000,12000,9000][i].toLocaleString()}</div></div><button class="action" onclick="addMeal('${x}',${[11000,19000,15000,12000,9000][i]})">加入</button></div></div>`).join('')+`<div class="card"><b>購物車</b><div id="cart-list">${state.mealCart.map(x=>x.name).join('、')||'尚未選擇餐點'}</div><button class="action" onclick="checkout()">前往付款</button></div>`;header('Food Delivery',c);break;
+case'taxi':c=`<div class="card"><b>叫車紀錄</b><p class="muted small">僅瀏覽，不可新增行程</p></div>`+appRow('11/01','168 宿舍 → STARSHIP','₩ 12,800')+appRow('10/31','STARSHIP → 錄音室','₩ 9,600')+appRow('10/30','電視台 → 168 宿舍','₩ 18,200');header('Taxi',c);break;
+case'health':header('Health',`<div class="card"><b>無法開啟</b><p>此 App 已停用。</p></div>`);break;
+case'notes':c=`<div class="card"><b>備忘錄</b><p class="muted small">僅瀏覽</p></div>`+appRow('買飲料','無糖冰美式')+appRow('練習室','記得帶護膝')+appRow('小想法','下次想試試新的攀岩館')+appRow('待辦','整理相簿、充電');header('Notes',c);break;
+case'photos':c=`<div class="card"><b>照片 · 約 80 張</b><p class="muted small">公開照片素材尚未匯入；以下為分類預覽，不會冒充真實照片。</p></div><div class="photo-grid">${Array.from({length:30},(_,i)=>`<div class="photo" style="background:linear-gradient(${i*19}deg,#696b70,#282a30)">照片 ${i+1}<br><small>${['自拍','團體','練習','舞台','日常'][i%5]}</small></div>`).join('')}</div>`;header('Photos',c);break;
+case'camera':header('Camera',`<div style="height:70%;background:linear-gradient(#35373c,#111);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;flex-direction:column"><div style="font-size:38px">◉</div><p>相機預覽</p><span class="tiny">此介面僅供展示，無法拍攝或錄影</span></div>`);break;
+case'calendar':c=`<div class="card"><b>2026年11月</b><p class="muted small">十天行程 · 唯讀</p></div>`+dates.map((d,i)=>`<div class="card"><b>${d}</b>${schedule[i].map((v,j)=>j%2===0?`<div class="item"><span class="pill">${v}</span> ${schedule[i][j+1]||''}</div>`:'').join('')}</div>`).join('');header('Calendar',c);break;
+case'settings':c=`<div class="card"><b>김태영</b><p class="muted small">Apple ID · 唯讀示意</p></div>`+['飛航模式','Wi-Fi　已連線','藍牙　開啟','行動服務　LTE','通知','一般','顯示與亮度','電池　100%','隱私權與安全性'].map(x=>appRow(x,'查看設定（不可修改）','›')).join('');header('Settings',c);break;
+case'phone':el('appview').classList.add('phone-mode');el('apptitle').textContent='Phone';el('appbody').style.padding='0';el('appbody').classList.remove('dark');el('appbody-content').innerHTML=phoneFrame(phoneContent('calls'),'calls');break;
+case'messages':c=`<div class="card"><b>訊息</b><p class="muted small">可瀏覽、封鎖及檢舉；不可傳送或刪除</p></div>`+[['매니저님','내일 일정이 조금 변경됐어요.'],['未知號碼','왜 답장 안 해?'],['성민이','일어나면 연락해 ㅋㅋ'],['未知號碼','오늘도 회사 가는 거 맞지?']].map((x,i)=>`<div class="card"><b>${x[0]}</b><p>${x[1]}</p>${x[0]==='未知號碼'?`<button class="action secondary" onclick="blockNumber('${x[0]}')">封鎖</button> <button class="action secondary" onclick="toast('已檢舉')">檢舉</button>`:''}</div>`).join('');header('Messages',c);break;
+case'calculator':c=`<div style="background:#111;color:white;border-radius:18px;padding:18px;margin-bottom:12px;text-align:right"><div style="font-size:42px;min-height:56px" id="calcdisplay">${state.calc}</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${['AC','±','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','='].map(k=>`<button class="key" style="border-radius:50%;height:55px;background:${['÷','×','−','+','='].includes(k)?'#ff9f0a':['AC','±','%'].includes(k)?'#aaa':'#444'};color:${['AC','±','%'].includes(k)?'#111':'white'}" onclick="calcPress('${k}')">${k}</button>`).join('')}</div>`;header('Calculator',c);break;
+default:header(id,'<div class="card">此 App 尚無內容。</div>');
+}
+const panel=storyPanel(id);
+if(panel) el('appbody-content').insertAdjacentHTML('beforeend',panel);
+}
+function openChat(name){state.selectedChat=name;let rows=chatData[name]||[];let html=`<div class="card"><b>${name}</b><p class="muted small">近一週聊天紀錄 · 唯讀瀏覽</p></div>`+rows.map(r=>`<div class="card"><div class="muted tiny">${r[0]}</div><b>${r[1]}</b><p>${r[2]}</p></div>`).join('')+`<div class="card"><b>需要回覆時</b><p class="muted small">選擇一個回覆，不開放自由輸入。</p><button class="choice" onclick="replyChoice('알겠어 ㅋㅋ')">알겠어 ㅋㅋ</button><button class="choice" onclick="replyChoice('응 조금 있다가 봐!')">응 조금 있다가 봐!</button><button class="choice" onclick="replyChoice('지금은 조금 바빠. 나중에 연락할게.')">지금은 조금 바빠. 나중에 연락할게.</button></div>`;header('KakaoTalk',html);el('appback').onclick=()=>renderApp('kakao')}
+function replyChoice(i){const options=[['알겠어 ㅋㅋ','知道啦ㅋㅋ'],['응 조금 있다가 봐!','嗯，等一下見！'],['지금은 조금 바빠. 나중에 연락할게.','我現在有點忙，晚點聯絡你。']];const pair=options[typeof i==='number'?i:0];state.chatReplies=state.chatReplies||{};state.chatReplies[state.selectedChat]=state.chatReplies[state.selectedChat]||[];state.chatReplies[state.selectedChat].push([timeStr(),'김태영',pair[0]]);toast('已傳送模擬訊息');state.events.push('回覆 '+state.selectedChat+'：'+pair[0]);advance(2);openChat(state.selectedChat)}
+function bubbleAvatar(which,large=false){
+  const src=state.bubbleAvatars&&state.bubbleAvatars[which];
+  const cls=large?'bubble-profile-avatar':'bubble-avatar';
+  return `<button class="${cls}" onclick="${large?`document.getElementById('bubble-upload-${which}').click()`: `openBubbleProfile('${which}')`}" aria-label="${large?'上傳':'查看'}藝人頭像">${src?`<img src="${src}" alt="藝人頭像">`:'<span class="bubble-placeholder">人</span>'}</button>`;
+}
+function renderBubbleHome(){
+  state.app='bubble';
+  el('appview').classList.add('bubble-mode');el('statusbar').classList.add('bubble-status');
+  el('appbody').style.padding='0';el('appbody').classList.remove('dark');
+  el('apptitle').textContent='STARSHIP bubble';
+  el('appbody-content').innerHTML=`<div class="bubble-home"><div class="bubble-home-title">STARSHIP bubble</div>
+    <button class="bubble-choice" onclick="openBubble('tae')">${bubbleAvatarForList('tae')}<span class="bubble-choice-main"><span class="bubble-choice-name"><span class="bubble-unread"></span>영이</span><span class="bubble-choice-sub">CRAVITY · TAEYOUNG</span></span><span>›</span></button>
+    <button class="bubble-choice" onclick="openBubble('seong')">${bubbleAvatarForList('seong')}<span class="bubble-choice-main"><span class="bubble-choice-name">덩미니</span><span class="bubble-choice-sub">CRAVITY · SEONGMIN</span></span><span>›</span></button>
+  </div>`;
+}
+function bubbleAvatarForList(which){const src=state.bubbleAvatars&&state.bubbleAvatars[which];return `<span class="bubble-choice-avatar">${src?`<img src="${src}" alt="">`:'<span class="bubble-placeholder">人</span>'}</span>`}
+function openBubble(which){
+  state.bubbleCurrent=which;state.app='bubble';
+  el('appview').classList.add('bubble-mode');el('statusbar').classList.add('bubble-status');
+  el('appbody').style.padding='0';el('appbody').classList.remove('dark');
+  const tae=which==='tae',name=tae?'영이':'덩미니';
+  const messages=tae?[
+    {type:'text',ko:'오늘도 잘 지내고 있어요? 밥은 먹었어요? ㅎㅎ',zh:'今天也过得好吗？吃饭了吗？ㅎㅎ',time:'17:24'},
+    {type:'text',ko:'오늘 연습 끝나고 잠깐 쉬는 중!',zh:'今天练习结束后正在稍微休息！',time:'17:26'},
+    {type:'text',ko:'사진 하나 보내줄까?',zh:'要不要给你们发张照片？',time:'17:27'},
+    {type:'live',ko:'bubble LIVE',zh:'',time:'17:30'},
+    {type:'call',ko:'00:16:39',zh:'',time:'17:42'}
+  ]:[
+    {type:'text',ko:'오늘 날씨 진짜 좋다 ㅎㅎ',zh:'今天天气真的很好ㅎㅎ',time:'17:24'},
+    {type:'text',ko:'뭐 하고 있어요?',zh:'你们在做什么？',time:'17:25'},
+    {type:'text',ko:'아 맞다 태영이한테 물어볼 거 있었는데',zh:'啊对了，我有件事想问泰英来着',time:'17:26'}
+  ];
+  const content=messages.map(m=>{
+    let card='';
+    if(m.type==='text')card=`<div class="bubble-card"><div class="bubble-korean">${escHtml(m.ko)}</div><div class="bubble-chinese">${escHtml(m.zh)}</div></div>`;
+    if(m.type==='live')card=`<div class="bubble-static-card"><span class="bubble-static-icon">☎</span><span>bubble LIVE</span></div><div class="bubble-static-note">LIVE 訊息紀錄 · 僅供瀏覽</div>`;
+    if(m.type==='call')card=`<div class="bubble-static-card"><span class="bubble-static-icon">☎</span><span>${m.ko}</span></div><div class="bubble-static-note">通話紀錄 · 僅供瀏覽</div>`;
+    return `<div class="bubble-message">${bubbleAvatar(which)}<div class="bubble-message-content"><div class="bubble-artist-line"><span class="bubble-artist-tag">ARTIST</span><span class="bubble-artist-name">${name}</span></div>${card}<div class="bubble-time">${m.time}</div></div></div>`;
+  }).join('');
+  el('appbody-content').innerHTML=`<div class="bubble-room"><div class="bubble-room-head"><button onclick="renderBubbleHome()">×</button>${name}<button class="bubble-room-more" onclick="openBubbleProfile('${which}')">•••</button></div><div class="bubble-room-messages">${content}</div></div>`;
+}
+function openBubbleProfile(which){
+  const tae=which==='tae',name=tae?'영이':'덩미니',id=tae?'CRAVITY · TAEYOUNG':'CRAVITY · SEONGMIN';
+  el('appview').classList.add('bubble-mode');el('statusbar').classList.add('bubble-status');
+  el('appbody').style.padding='0';
+  el('appbody-content').innerHTML=`<div class="bubble-profile"><button class="bubble-profile-close" onclick="openBubble('${which}')">×</button><div class="bubble-profile-group">${bubbleAvatar(which,true)}<div class="bubble-profile-name-row"><span class="bubble-artist-tag">ARTIST</span><span class="bubble-profile-name">${name}</span></div><div class="bubble-clover">🍀</div><div class="bubble-profile-id">${id}</div><div class="bubble-upload-hint">點擊頭像上傳／更換照片</div><input id="bubble-upload-${which}" type="file" accept="image/*" hidden onchange="uploadBubbleAvatar('${which}',this)"></div></div>`;
+}
+function uploadBubbleAvatar(which,input){
+  const file=input.files&&input.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')){toast('請選擇圖片檔案');return;}
+  const reader=new FileReader();reader.onload=()=>{state.bubbleAvatars=state.bubbleAvatars||{};state.bubbleAvatars[which]=reader.result;try{localStorage.setItem('taeyoungBubbleAvatars',JSON.stringify(state.bubbleAvatars));}catch(e){toast('圖片太大，請選擇較小的照片');return;}openBubbleProfile(which);toast('頭像已更新');};reader.readAsDataURL(file);
+}
+function openBubbleImage(src){el('bubble-image-large').src=src;el('bubble-image-viewer').classList.add('show')}
+function closeBubbleImage(){el('bubble-image-viewer').classList.remove('show')}
+
+function watchVideo(name){header('YouTube',`<div class="card"><div style="height:190px;background:#111;color:#fff;display:grid;place-items:center;font-size:42px">▶</div><b>${name}</b><p class="muted small">模擬播放畫面 · 僅觀看</p><button class="action secondary" onclick="renderApp('youtube')">返回首頁</button></div>`)}
+function mailDetail(i){let m=[['STARSHIP','11月行程確認','請確認本週工作行程。集合時間依照經紀人最新通知為準。'],['Manager','Re: 事前錄影集合時間','集合時間與交通安排已更新，請留意群組通知。'],['Brand Team','品牌合作邀請','希望邀請你參與本次企劃，詳細內容將由公司窗口統一確認。'],['Music Show','事前錄影注意事項','請依照工作人員通知完成報到，並留意現場動線。'],['Newsletter','CRAVITY weekly update','本週活動資訊整理。']][i];header('Mail',`<div class="card"><b>${m[1]}</b><p class="muted small">${m[0]}</p><hr><p>${m[2]}</p><p class="muted tiny">此郵件為遊戲內模擬內容。</p></div>`)}
+function walletPay(){el('overlay').classList.add('show');el('sheet').innerHTML=`<h3>確認付款</h3><p>模擬交易：₩ 35,000</p><p class="muted small">使用 BLACK CARD。這不會連接真實金融帳戶。</p><button class="action" onclick="confirmPay()">確認付款</button> <button class="action secondary" onclick="closeOverlay()">取消</button>`}
+function confirmPay(){closeOverlay();let t=el('transactions');if(t)t.innerHTML='₩ 35,000 · 模擬消費 · '+dates[state.day];toast('遊戲內付款完成');state.events.push('黑卡模擬消費 ₩35,000');advance(3)}
+function addMeal(name,price){state.mealCart.push({name,price});renderApp('food');toast('已加入購物車')}
+function checkout(){if(!state.mealCart.length){toast('購物車是空的');return}let sum=state.mealCart.reduce((a,b)=>a+b.price,0);el('overlay').classList.add('show');el('sheet').innerHTML=`<h3>訂單確認</h3><p>${state.mealCart.map(x=>x.name).join('、')}</p><p>總計：₩ ${sum.toLocaleString()}</p><button class="action" onclick="completeOrder()">使用黑卡付款</button> <button class="action secondary" onclick="closeOverlay()">取消</button>`}
+function completeOrder(){closeOverlay();state.events.push('外送訂單：'+state.mealCart.map(x=>x.name).join('、'));state.mealCart=[];toast('訂單已送出（模擬）');advance(15);renderApp('food')}
+function blockNumber(n){state.blocked.push(n);toast('已封鎖未知號碼')}
+function closeOverlay(){el('overlay').classList.remove('show')}
+function advance(min){if(state.afterEnding)return;state.minute+=min;if(state.minute>=1440){state.minute-=1440;state.day=Math.min(9,state.day+1);if(state.day===9)state.ending=true;toast('日期已更新：'+dates[state.day])}updateClock();save()}
+function finishDay(){if(state.day<9){state.minute=480;state.day++;updateClock();save();toast('已進入'+dates[state.day])}else{state.afterEnding=true;state.ending=true;header('十日回顧',`<div class="card"><h3>十日生活回顧</h3><p>2026/11/02 – 2026/11/11</p><p>這十天的行程、訊息、選擇與成員互動已整理完成。</p><p>你可以繼續自由瀏覽手機，但不再推進時間或觸發新事件。</p><button class="action" onclick="closeApp()">自由瀏覽手機</button></div><div class="card"><b>重要紀錄</b>${state.events.map(x=>`<p class="small">${x}</p>`).join('')||'這次旅程留下了許多日常片段。'}</div>`);}}
+function calcPress(k){let v=state.calc;if(k==='AC'){state.calc='0';state.calcPrev=null;state.calcOp=null}else if(k==='±'){state.calc=String(-Number(v))}else if(k==='%'){state.calc=String(Number(v)/100)}else if(['+','−','×','÷'].includes(k)){state.calcPrev=Number(v);state.calcOp=k;state.calcNew=true}else if(k==='='){if(state.calcPrev!==null){let a=state.calcPrev,b=Number(v);state.calc=String(state.calcOp==='+'?a+b:state.calcOp==='−'?a-b:state.calcOp==='×'?a*b:a/b);state.calcPrev=null;state.calcOp=null;state.calcNew=true}}else if(k==='.'){if(!v.includes('.'))state.calc+='.'}else{state.calc=state.calcNew?k:v==='0'?k:v+k;state.calcNew=false}let d=el('calcdisplay');if(d)d.textContent=state.calc}
+function swipeHome(){if(el('overlay').classList.contains('show')){closeOverlay();return}if(el('unlock').classList.contains('show'))return;if(el('appview').classList.contains('active')){closeApp();return}if(el('home').classList.contains('active')){closeApp();return}if(el('lockscreen').classList.contains('active')){unlockStart()}}
+let touchStart=null;el('phone').addEventListener('touchstart',e=>{let t=e.touches[0];touchStart={x:t.clientX,y:t.clientY}}, {passive:true});el('phone').addEventListener('touchend',e=>{if(!touchStart)return;let t=e.changedTouches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;if(touchStart.y>el('phone').clientHeight-35&&dy<-40){swipeHome()}else if(el('lockscreen').classList.contains('active')&&dy<-35){unlockStart()}else if(el('home').classList.contains('active')&&Math.abs(dx)>45){state.page=dx<0?1:0;el('page0').classList.toggle('active',state.page===0);el('page1').classList.toggle('active',state.page===1);document.querySelectorAll('.pagedot').forEach((d,i)=>d.classList.toggle('on',i===state.page))}touchStart=null},{passive:true});
+el('lockscreen').addEventListener('click',()=>unlockStart());
+el('keypad').addEventListener('click',e=>{let b=e.target.closest('button');if(b)enterKey(b.dataset.n)});
+document.addEventListener('click',e=>{let b=e.target.closest('[data-app]');if(b)openApp(b.dataset.app)});
+el('appback').onclick=closeApp;el('appmore').onclick=()=>toast('此 App 的其他功能依照設定限制');
+el('gesturelayer').addEventListener('click',swipeHome);el('homebar').addEventListener('click',swipeHome);
+el('overlay').addEventListener('click',e=>{if(e.target===el('overlay'))closeOverlay()});
+buildHome();load();try{state.bubbleAvatars=JSON.parse(localStorage.getItem('taeyoungBubbleAvatars')||'{}')}catch(e){state.bubbleAvatars={}}updateClock();
+/* ===== Compatibility + bilingual interaction patch v2 ===== */
+const ZH_KO = {
+'카카오톡':'KakaoTalk','배달의민족':'韩式外卖平台','CRAVITY 공식':'CRAVITY官方','CRAVITY 공식 콘텐츠｜Behind the scene':'CRAVITY官方内容｜幕后花絮','성민이의 Vlog｜오늘의 기록':'性珉的Vlog｜今天的记录','성민이':'性珉','박세림':'朴世琳','마앨런':'馬艾倫','구정모':'具廷謨','서우빈':'徐宇彬','함원진':'咸元進','강민희':'姜珉熙','송형준':'宋亨俊','김태영':'金太荣','안성민':'安性珉','세림형':'世琳哥','런이형':'Allen哥','정모형':'廷谟哥','우빈형':'宇彬哥','원진형':'元进哥','민희형':'珉熙哥','형준형':'亨俊哥','매니저님':'经纪人','CRAVITY 단체방':'CRAVITY群聊','168 dorm':'168宿舍群','우빈형':'宇彬哥',
+'오늘 회사에서 특별 무대 얘기 나온대. 어제 말한 그 편곡 파일도 챙겨 와.':'听说今天公司会讨论特别舞台的事。把昨天说的编曲文件也带来。',
+'원진：후렴 동선 바뀐 거 확인했지? 정모：응, 새 버전으로 맞춰 볼게.':'元进：副歌走位改过了，你确认了吗？廷谟：嗯，我会按照新版本调整。',
+'연습 영상 보니까 마지막 대형만 다시 맞추면 될 것 같아. 밥 먹고 조금만 더 보자.':'看了练习视频，最后的队形再调整一下就可以了。吃完饭再确认一会儿吧。',
+'사전 녹화 수고했어요. 오늘 공개되는 건 공식 티저뿐이니 개인 촬영분은 올리지 말아 주세요.':'预录辛苦了。今天只会公开官方预告，请不要上传个人拍摄的素材。',
+'오늘 팬들 반응 봤어? 아직 다들 콘셉트 추측만 하더라 ㅋㅋ':'你看今天粉丝们的反应了吗？大家目前都还只是在猜概念ㅋㅋ',
+'민희：쉬는 날인데 왜 다들 거실에 모였어ㅋㅋ 세림：저녁 같이 먹자고 했잖아.':'珉熙：明明是休息日，怎么大家都聚在客厅ㅋㅋ 世琳：不是说好一起吃晚饭吗。',
+'오늘은 좀 피곤해 보이더라. 내일 끝나고 잠깐 얘기하자.':'你今天看起来有点累。明天结束后我们聊一下吧。',
+'오늘 사전 녹화는 예정대로 진행합니다. 이동 시간만 다시 확인해 주세요.':'今天的预录会按计划进行，请再确认一下移动时间。',
+'형준：비하인드 촬영본 확인했어요. 세림：다들 고생했어. 마지막까지 잘 마무리하자.':'亨俊：幕后拍摄素材已经确认了。世琳：大家辛苦了，最后也好好收尾吧。',
+'열흘 동안 진짜 바빴다. 그래도 같이 끝내서 다행이야. 오늘은 푹 쉬자.':'这十天真的很忙。不过能一起完成真是太好了。今天好好休息吧。',
+'오늘도 수고했어. Afterglow 무대 오래 기억할게 💙':'今天也辛苦了。我会一直记得Afterglow舞台的💙',
+'이번 주에 특별한 촬영이 있나 봐요. 멤버들 건강하게 활동했으면 좋겠어요.':'这周好像有特别拍摄，希望成员们都能健康地活动。',
+'공식 티저에 나온 조명 색감 예쁘다… 무대 콘셉트가 뭘까요?':'官方预告里的灯光配色好漂亮……舞台概念会是什么呢？',
+'아직 공개된 내용만 보고 기다리기! 추측은 추측으로 남겨 둬요.':'先只看已经公开的内容，耐心等待吧！猜测就让它停留在猜测。',
+'사전 녹화 다녀온 분들 모두 수고했어요. 정확한 후기는 공식 영상 기다릴게요.':'去参加预录的大家都辛苦了。详细内容还是等官方视频吧。',
+'비하인드 예고편 봤어요? 연습 과정도 공개되면 좋겠다.':'看幕后预告了吗？希望练习过程也能公开。',
+'열흘 동안 준비한 무대 정말 고생 많았어요. 다음 활동도 응원합니다!':'这十天准备舞台真的辛苦了！也会继续支持下一次活动！',
+'오늘 일정이 조금 바빠요 ㅎㅎ 그래도 좋은 거 준비하고 있으니까 기대해 주세요! 밥 꼭 챙겨 먹기.':'今天行程有点忙ㅎㅎ 不过我们正在准备很棒的东西，请期待一下！一定要好好吃饭。',
+'연습하고 왔어요. 오늘은 새 버전으로 맞춰 봤는데 생각보다 재밌었어요ㅋㅋ':'练习结束回来啦。今天按照新版本排了一遍，比想象中有趣ㅋㅋ',
+'오늘 새벽부터 움직인 사람들 많죠? 따뜻한 거 먹고 푹 쉬어요.':'今天一大早就开始活动的人很多吧？吃点热乎的，好好休息。',
+'오늘은 쉬는 날! 멤버들이랑 맛있는 거 먹으려고요.':'今天是休息日！打算和成员们一起吃好吃的。',
+'요즘 날씨가 갑자기 쌀쌀해졌어요. 겉옷 챙겨 입기!':'最近天气突然变凉了。记得带件外套！',
+'열심히 준비한 무대 잘 봐 줘서 고마워요. 오늘은 진짜 푹 잘 수 있겠다 ㅎㅎ':'谢谢大家认真欣赏我们努力准备的舞台。今天终于可以好好睡一觉了ㅎㅎ',
+'촬영 끝나고 짧은 브이로그':'拍摄结束后的小短片',
+'오늘 특별 무대 준비 들어간대.':'听说要开始准备特别舞台了。',
+'두 번째 버전으로 다시 맞춰 볼게요.':'我们会按照第二个版本重新排练。',
+'개인 촬영분은 공개하지 말아 주세요.':'请不要公开个人拍摄的素材。',
+'촬영 일정이 하루 미뤄졌어요.':'拍摄日程延后了一天。',
+'최종 영상 확인 부탁드립니다.':'请帮忙确认最终视频。',
+'오늘도 회사 가는 거 맞지?':'你今天也要去公司，对吧？',
+'모르는 연락은 답하지 말고 캡처해서 전달해 주세요.':'请不要回复陌生联系，把截图转交给我们。',
+'끝나고 숙소에서 봐 ㅋㅋ':'结束后宿舍见ㅋㅋ',
+'내일 일찍 일어나야 되는 거 알지':'你知道明天要早起吧。','알지 알지 ㅋㅋ':'知道啦知道啦ㅋㅋ','맨날 알지만 못 일어나잖아':'你每次都说知道，结果还是起不来。','일어났어? 오늘 일정 확인했어?':'起床了吗？确认今天的行程了吗？',
+'내일 다들 늦지 말기ㅋㅋ':'大家明天都不要迟到ㅋㅋ','태영이부터 걱정해야 되는 거 아님?':'不是应该先担心太荣吗？','왜 나야 ㅋㅋㅋ':'为什么是我ㅋㅋㅋ','다들 푹 자고 내일 보자':'大家都好好睡，明天见。',
+'태영아 내일 아침에 같이 내려가자':'太荣啊，明天早上一起下楼吧。','넵 형 ㅎㅎ':'好的，哥ㅎㅎ','태영아 밥 먹었어?':'太荣啊，吃饭了吗？','아직요 형':'还没呢，哥。','내일 연습실 몇 시까지 가면 돼?':'明天几点前到练习室就可以？','아마 10시 전이요':'应该十点前吧。','아침에 먹을 거 챙겨둘게':'我会帮你准备好早餐。','형 최고':'哥最棒。','태영아 내일 컨디션 괜찮아?':'太荣啊，明天状态还好吗？','완전 괜찮지 ㅋㅋ':'当然很好啊ㅋㅋ','태영아 내 충전기 봤어?':'太荣啊，你看到我的充电器了吗？','아니요 ㅋㅋ':'没有欸ㅋㅋ','태영아 내일 추울 수도 있대 겉옷 챙겨':'太荣啊，听说明天可能会冷，记得带外套。','오키 형':'OK，哥。','내일 9시 30분까지 회사로 와 주세요.':'请明天九点半前到公司。','네 확인했습니다.':'好的，确认了。','내일 아침 다 같이 먹자':'明天早上大家一起吃吧。','태영이 늦잠 자면 우리끼리 먹음ㅋㅋ':'如果太荣睡过头，我们就自己先吃ㅋㅋ','아니거든요':'才不会呢。',
+'오늘 무대도 수고했어! 다들 조심히 들어가 💙':'今天的舞台也辛苦了！大家回去路上小心💙','오늘 태영이 사진 진짜 분위기 미쳤다…':'今天太荣的照片氛围感真的绝了……','이번 주 무대 영상 모음 정리했어요.':'整理了这周的舞台视频合集。','오늘 이동 중에 봤다는 글이 올라왔는데…':'有人发帖说今天在移动途中看到了成员……','이번 주 활동 이야기 나눠요!':'来聊聊这周的活动吧！','오늘 무대 의상 너무 잘 어울렸어요!':'今天的舞台服装真的很适合你们！','이번 주 CRAVITY 사진 정리 💙':'整理了这周的CRAVITY照片💙','다음 활동도 오래오래 응원할게요.':'也会一直支持接下来的活动。','멤버들 오늘도 고생 많았어요!':'成员们今天也辛苦了！',
+'모바일 리듬 게임':'手机节奏游戏','퍼즐 게임':'益智游戏','전략 게임':'策略游戏','오늘 일정 확인했어?':'确认今天的行程了吗？','조심히 들어가.':'回去路上小心。','잠깐 쉬었다가 연습하자.':'稍微休息一下再练习吧。','치킨 세트':'炸鸡套餐','마라탕':'麻辣烫','불고기 덮밥':'烤牛肉盖饭','샌드위치 세트':'三明治套餐','내일 일정이 조금 변경됐어요.':'明天的行程稍微有些调整。','왜 답장 안 해?':'为什么不回复？','일어나면 연락해 ㅋㅋ':'起床了联系我ㅋㅋ','알겠어 ㅋㅋ':'知道了ㅋㅋ','응 조금 있다가 봐!':'嗯，等一下见！','지금은 조금 바빠. 나중에 연락할게.':'我现在有点忙，晚点联系你。','태영아 오늘도 수고했어 💙':'太荣啊，今天也辛苦了💙','밥 꼭 챙겨 먹기!':'一定要好好吃饭！','오늘 사진 더 보고 싶어요 ㅎㅎ':'今天还想看更多照片ㅎㅎ','오늘 날씨 괜찮더라. 다들 따뜻하게 입고 다녀요!':'今天天气还不错。大家出门都穿暖和一点！','오늘도 좋은 하루 보내요!':'今天也要度过美好的一天！'
+};
+function addKoreanTranslations(root){
+  if(!root)return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    if(node.parentElement && node.parentElement.closest('.kt-wrap'))return;
+    const raw=node.nodeValue, key=raw.trim();
+    if(!key || !/[가-힣]/.test(key) || !ZH_KO[key])return;
+    if(node.parentElement && (node.parentElement.closest('.translation') || node.parentElement.dataset.translated==='1'))return;
+    const frag=document.createDocumentFragment();
+    const original=document.createElement('span');original.textContent=raw;original.dataset.translated='1';
+    const zh=document.createElement('div');zh.className='translation';zh.textContent=ZH_KO[key];
+    frag.append(original,zh);node.parentNode.replaceChild(frag,node);
+  });
+}
+function detailPage(title, body, backFn){
+  header(title,body);
+  el('appback').onclick=backFn||(()=>renderApp(state.app));
+  addKoreanTranslations(el('appbody-content'));
+}
+const baseRenderApp=renderApp;
+renderApp=function(id){
+  state.app=id;
+  el('appback').onclick=closeApp;
+  baseRenderApp(id);
+  el('appback').onclick=closeApp;
+  enhanceApp(id);
+  addKoreanTranslations(el('appbody-content'));
+};
+function enhanceApp(id){
+  const root=el('appbody-content');
+  if(!root)return;
+  root.querySelectorAll('.item').forEach((node,i)=>{
+    if(node.dataset.detailBound)return;
+    node.dataset.detailBound='1';node.style.cursor='pointer';
+    node.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(e.target.closest('button'))return;
+      const text=node.innerText.trim();
+      detailPage('詳細資訊',`<div class="card"><p style="white-space:pre-line">${escHtml(text)}</p><p class="muted small">此項目為手機內的唯讀紀錄。</p></div>`,()=>renderApp(id));
+    });
+  });
+  root.querySelectorAll('.photo').forEach((node,i)=>{
+    if(node.dataset.photoBound)return;node.dataset.photoBound='1';node.style.cursor='pointer';
+    node.addEventListener('click',()=>detailPage('照片預覽',`<div class="photo" style="height:260px;aspect-ratio:auto;justify-content:center;align-items:center;font-size:16px">${escHtml(node.innerText)}<br><small>示意素材，非真實照片</small></div><p class="muted small">此版本尚未匯入實際照片素材。</p>`,()=>renderApp(id)));
+  });
+  if(['instagram','x','berriz','melon','game','taxi','notes','clock','translate','weather','settings','phone','messages'].includes(id)){
+    root.querySelectorAll('.card').forEach((node,i)=>{
+      if(node.dataset.detailBound || node.querySelector('button'))return;
+      node.dataset.detailBound='1';node.style.cursor='pointer';
+      node.addEventListener('click',e=>{
+        if(e.target.closest('button'))return;
+        detailPage('詳細紀錄',`<div class="card"><p style="white-space:pre-line">${escHtml(node.innerText.trim())}</p><p class="muted small">遊戲內瀏覽紀錄 · 唯讀</p></div>`,()=>renderApp(id));
+      });
+    });
+  }
+  if(id==='calendar' && !root.querySelector('[data-finish-day]')){
+    const btn=document.createElement('button');btn.className='action';btn.dataset.finishDay='1';btn.style.width='100%';btn.style.margin='6px 0 14px';btn.textContent=state.day===9?'完成十日企劃／查看回顧':'完成今日行程 · 進入下一天';
+    btn.addEventListener('click',()=>{finishDay();save();updateClock();});root.prepend(btn);
+  }
+  if(id==='phone' && !root.querySelector('[data-call-demo]')){
+    const btn=document.createElement('button');btn.className='action';btn.dataset.callDemo='1';btn.style.width='100%';btn.textContent='模擬接收來電';
+    btn.onclick=()=>incomingCall();root.prepend(btn);
+  }
+  if(id==='photos'){
+    const note=document.createElement('div');note.className='card small';note.innerHTML='<b>相簿說明</b><p class="muted">目前為可點擊的照片分類佔位畫面；未匯入的照片不會假裝成真實公開照片。</p>';root.prepend(note);
+  }
+}
+function escHtml(x){return String(x||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ktAvatar(name,group=false){
+  const initials={'성민이':'성','CRAVITY 단체방':'🪐','세림형':'世','런이형':'倫','정모형':'謨','우빈형':'彬','원진형':'進','민희형':'熙','형준형':'俊','매니저님':'M','168 dorm':'168'};
+  return `<div class="kt-avatar ${group?'group':''}">${initials[name]||'•'}</div>`;
+}
+function ktIncomingAvatar(name){
+  return `<div class="kt-msg-avatar" role="img" aria-label="${escHtml(name||'預設頭像')}"></div>`;
+}
+function renderKakaoList(){
+  state.app='kakao';
+  const replies=state.chatReplies||{};
+  const rows=chatNames.map((name,i)=>{
+    const data=chatData[name]||[];const last=(replies[name]||[]).slice(-1)[0]||data[data.length-1];
+    const preview=last?(last.sender==='김태영'?'나: ':'')+last[2]: '새로운 대화';
+    const time=last?last[0].split(' ').slice(-1)[0]:'';
+    return `<button class="kt-row" onclick="openChat('${name.replace(/'/g,"\\'")}')">${ktAvatar(name,name.includes('단체')||name.includes('dorm'))}<span class="kt-row-main"><span class="kt-row-title">${escHtml(name)}${name==='성민이'?'<span style="color:#e7b900;font-size:12px">♥</span>':''}</span><span class="kt-row-preview">${escHtml(preview)}</span></span><span class="kt-row-right"><span>${escHtml(time)}</span>${i===0&&state.day===0?'<span class="kt-unread">1</span>':''}</span></button>`;
+  }).join('');
+  header('KakaoTalk',`<div class="kt-wrap"><div class="kt-top"><span>채팅</span><span class="kt-top-actions">⌕　＋　☰</span></div><div class="kt-search">⌕　搜尋聊天</div><div class="kt-list">${rows}</div><div class="kt-tabs"><span><b>●</b>朋友</span><span><b>▣</b>聊天</span><span><b>◉</b>開放聊天</span><span><b>◷</b>動態</span><span><b>⋯</b>更多</span></div></div>`);
+  el('appbody').style.padding='0';
+}
+function openChat(name){
+  state.selectedChat=name;state.chatReplies=state.chatReplies||{};
+  const rows=[...(chatData[name]||[]),...(state.chatReplies[name]||[])];
+  let lastDate='';
+  const messages=rows.map(r=>{
+    const date=(r[0]||'').split(' ')[0];let divider='';
+    if(date!==lastDate){divider=`<div class="kt-day">${date.includes('/')?'2026年'+date.replace('/','月')+'日':date}</div>`;lastDate=date;}
+    const mine=r[1]==='김태영';const zh=ZH_KO[r[2]]||'（中文翻譯暫缺）';
+    return divider+`<div class="kt-msg ${mine?'mine':''}">${mine?'':ktIncomingAvatar(r[1]||name)}<div class="kt-msg-content">${!mine&&name.includes('단체')?`<div class="kt-sender">${escHtml(r[1])}</div>`:''}<div class="kt-bubbleline">${mine?`<span class="kt-time">${escHtml((r[0]||'').split(' ')[1]||'')}</span>`:''}<div class="kt-bubble">${escHtml(r[2])}<div class="kt-translation">${escHtml(zh)}</div></div>${mine?'':`<span class="kt-time">${escHtml((r[0]||'').split(' ')[1]||'')}</span>`}</div></div></div>`;
+  }).join('');
+  const options=[['알겠어 ㅋㅋ','知道啦ㅋㅋ'],['응 조금 있다가 봐!','嗯，等一下見！'],['지금은 조금 바빠. 나중에 연락할게.','我現在有點忙，晚點聯絡你。']];
+  const controls=name==='매니저님'?'<div class="kt-readonly">工作聊天室 · 可瀏覽紀錄</div>':`<div class="kt-compose"><div class="kt-compose-label">選擇快速回覆 · 不開放自由輸入</div>${options.map((o,i)=>`<button class="kt-reply" onclick="replyChoice(${i})">${o[0]}<div class="kt-translation">${o[1]}</div></button>`).join('')}</div>`;
+  header('KakaoTalk',`<div class="kt-room"><div class="kt-roomhead"><button onclick="renderKakaoList()">‹</button><div class="kt-roomtitle">${escHtml(name)}</div><div class="kt-roomtools">⌕　☰</div></div><div class="kt-messages" id="kt-messages">${messages||'<div class="kt-day">最近一週</div>'}</div>${controls}</div>`);
+  el('appbody').style.padding='0';
+  el('appback').onclick=()=>renderKakaoList();
+  requestAnimationFrame(()=>{const box=el('kt-messages');if(box)box.scrollTop=box.scrollHeight;});
+}
+function watchVideo(name){detailPage('YouTube',`<div class="card"><div style="height:190px;background:#111;color:#fff;display:grid;place-items:center;font-size:42px">▶</div><b>${escHtml(name)}</b><p class="muted small">模擬播放畫面 · 僅觀看</p><button class="action secondary" onclick="renderApp('youtube')">返回首頁</button></div>`,()=>renderApp('youtube'));}
+function mailDetail(i){
+ const m=[['STARSHIP','11月行程確認','請確認本週工作行程。集合時間依照經紀人最新通知為準。'],['Manager','Re: 事前錄影集合時間','集合時間與交通安排已更新，請留意群組通知。'],['Brand Team','品牌合作邀請','希望邀請你參與本次企劃，詳細內容將由公司窗口統一確認。'],['Music Show','事前錄影注意事項','請依照工作人員通知完成報到，並留意現場動線。'],['Newsletter','CRAVITY weekly update','本週活動資訊整理。']][i];
+ if(!m)return;detailPage('Mail',`<div class="card"><b>${escHtml(m[1])}</b><p class="muted small">${escHtml(m[0])}</p><hr><p>${escHtml(m[2])}</p><p class="muted tiny">此郵件為遊戲內模擬內容。</p></div>`,()=>renderApp('mail'));
+}
+function incomingCall(){
+  const options=[['성민이','안 받아도 돼. 그냥 목소리 듣고 싶어서.','不用勉强接听。我只是想听听你的声音。'],['매니저님','태영아, 내일 이동 시간이 바뀌었어. 확인했지?','太荣，明天的移动时间改了。确认了吗？'],['알 수 없는 번호','여보세요?','喂？']];
+  const item=options[state.calls.length%options.length];
+  state.calls.push({name:item[0],time:timeStr(),accepted:false});save();
+  el('overlay').classList.add('show');
+  el('sheet').innerHTML=`<h3>來電 · ${escHtml(item[0])}</h3><p>${escHtml(item[1])}</p><div class="translation">${escHtml(item[2])}</div><p class="muted small">模擬來電，不會連接真實電話服務。</p><button class="action" onclick="answerCall()">接聽</button> <button class="action secondary" onclick="rejectCall()">拒接</button>`;
+}
+function answerCall(){closeOverlay();if(state.calls.length)state.calls[state.calls.length-1].accepted=true;save();toast('已接聽模擬來電');advance(3);}
+function rejectCall(){closeOverlay();toast('已拒接來電');advance(1);}
+function finishDay(){
+  if(state.day<9){state.day++;state.minute=480;updateClock();save();toast('已進入 '+dates[state.day]);renderApp('calendar');}
+  else{state.afterEnding=true;state.ending=true;save();header('十日回顧',`<div class="card"><h3>Afterglow · 十日回顧</h3><p>2026/11/02 – 2026/11/11</p><p>十天的行程、訊息與成員互動已整理完成。你可以繼續自由瀏覽手機，但不再推進時間或觸發新事件。</p><button class="action" onclick="closeApp()">自由瀏覽手機</button></div><div class="card"><b>重要紀錄</b>${state.events.map(x=>`<p class="small">${escHtml(x)}</p>`).join('')||'這次旅程留下了許多日常片段。'}</div>`);el('appback').onclick=closeApp;}
+}
+const baseOpenApp=openApp;
+openApp=function(id){baseOpenApp(id);el('appback').onclick=closeApp;};
+/* Ensure every app detail is translated after dynamic re-rendering. */
+const appRoot=el('appbody-content');
+if(appRoot){new MutationObserver(()=>addKoreanTranslations(appRoot)).observe(appRoot,{childList:true,subtree:true});}
+
+</script>
+</body>
+</html>
